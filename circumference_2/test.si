@@ -1,0 +1,98 @@
+
+const INPUT_CURSOR    = 0
+const ANSWER          = 1
+const TEXT_LEN        = 2
+const TEXT            = 3
+
+const FORMULAS = [
+    ["0", "0"],
+    ["1 2 +", "3"],
+    ["3 8 5 | +", "16"],
+    ["2 3 + 5 1 >> -", "3"],
+    ["65534 1 ^ 2 ^ 3 ^ 4 ^ 5 ^ 6 ^ 7 ^ 8 ^ 9 ^ 10 ^ 11 ^ 12 ^ 13 ^ 32767 -", "32768"],
+    ["2 1 - 1 - 1 - 1 - 1 - 1 -", "-4"],
+    ["1 3 + 2 4 - | 13 4 7 & ^ -", "-11"],
+    ["1401 1002 - 903 1004 | +", "1406"]
+]
+
+def to_int(value: String) Int {
+    var dash = <U8>45
+    var len = value.len()
+    var i = 0
+    if dash == (<U8>value[0]) {
+        i = 1
+    }
+    var result = 0
+    while i < len {
+        result *= 10
+        let digitchar = <U8> value[i]
+        let digit = digitchar - 48
+        result += <Int>digit
+        i += 1
+    }
+    if dash == (<U8>value[0]) {
+        result = -result
+    }
+    return result
+}
+
+def on_reset($scratch_space: [Int], test: Int) {
+
+    let formula = FORMULAS[test]
+
+    let text = formula[0]
+    scratch_space[ANSWER] = to_int(formula[1])
+
+    let len = text.len()
+    scratch_space[TEXT_LEN] = len
+
+    var i = 0
+    while i < len {
+        scratch_space[TEXT + i] = <Int> (<U8> text[i])
+        i += 1
+    }
+
+    ui_set_hidden("pointer", true)
+    ui_set_text("text", text + " ")
+}
+
+def arch_get_input($scratch_space: [Int], test: Int) Int {
+    let cursor = scratch_space[INPUT_CURSOR]
+    _reg_alloc_use cursor
+    scratch_space[INPUT_CURSOR] += 1
+    let len = scratch_space[TEXT_LEN]
+
+    ui_set_hidden("pointer", false)
+    var ptext = ""
+    var i = 0
+    while i <= len {
+        if i == cursor {
+            ptext += "v"
+        } else {
+            ptext += " "
+        }
+        i += 1
+    }
+    ui_set_text("pointer", ptext)
+
+    return scratch_space[TEXT + cursor]
+}
+
+def arch_check_output($scratch_space: [Int], test: Int, input: Int, output: Int) TestResult {
+
+    let len = scratch_space[TEXT_LEN]
+
+    if len > scratch_space[INPUT_CURSOR] {
+        set_error(`You did not read all the characters from the formula yet`)
+        return fail
+    }
+
+    let answer = scratch_space[ANSWER]
+
+    if (<S16>output) != (<S16>answer) {
+        set_error(`Output should have been {str(answer)}, not {str(output)}`)
+        return fail
+    }
+
+    return win
+}
