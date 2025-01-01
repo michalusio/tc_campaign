@@ -5,15 +5,15 @@ immutable_spec = true
 copy_solution_to_level = ["symphony_10_functions"]
 no_score = true
 dialogue = [
-    (info, `The challenge of this level to implement a common programming structure called a "stack". You are supposed to do this in assembly. You can do two things with a stack:
+    (info, `The challenge of this level is to implement a common programming structure called a "stack". You are supposed to do this in assembly. You can do two things with a stack:
 
-[code]PUSH[/code] Adds a number to the stack
-[code]POP[/code] Remove the last added value from the stack
+[code]PUSH[/code] - Adds a number to the stack
+[code]POP[/code] - Removes the last added value from the stack
 
 You can think of the stack data structure like a physical stack of plates in a busy restaurant. The dishwasher pushes plates on top of the stack and the chef pops them off.
 
 Read the input in this level to get the next operation. 
-A non 0 input is a push, in this case store the value so it can be popped later. 
+A non-0 input is a push, in this case store the value so it can be popped later. 
 A 0 value is pop, remove and output the last number you stored.
 `),
 ]
