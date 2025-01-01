@@ -7,7 +7,7 @@ no_score = true
 copy_solution_to_level = ["symphony_7_io_devices"]
 dialogue = [
     (info, `First place a RAM component and set it's width to 16 bit and its size to 65536.`)
-    (info, `Once again, these are the [color=#ff9800]modes[/color] of [color=#e49f44]Symphony[/color]:
+    (info, `Once again, these are the [color=#ff9800]Modes[/color] of [color=#e49f44]Symphony[/color]:
 
 [code]0 IO
 1 ALU

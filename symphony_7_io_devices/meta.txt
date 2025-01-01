@@ -10,9 +10,9 @@ copy_solution_to_level = ["symphony_8_aliases"]
 dialogue = [
     (info, `For this level you need to place three new IO components, the Console, Time and Keyboard components.
 
-Also connect the Console to RAM.
+Also link the Console to RAM.
 `)
-    (info, `So far IO mode has had only 3 instructions, but now its time to add several more. This is the opcodes for the full list of IO instructions:
+    (info, `So far IO mode has had only 3 instructions, but now it is time to add several more. These are the opcodes for the full list of IO instructions:
 
 [code]
 0  nop       Do nothing
@@ -30,7 +30,7 @@ Also connect the Console to RAM.
 The console interprets bytes in the RAM component it is connected to as ASCII characters (see manual) and displays them. The Console has an "Offset" input, which determines which byte it considers its first character. This can be useful for example for scrolling text or for only updating with a new screen of text once everything is ready (called double buffering).
 An update to the console offset should use argument B and persist until the next update.
 
-The Time component outputs the time in nano seconds since 1st of January 1970 (The Unix epoch) as a 64 bit number. Since this architecture only deals with 16 bits, the value is split into 4 parts that can be read seperately.
+The Time component outputs the time in nano seconds since 1st of January 1970 (The Unix epoch) as a 64 bit number. Since this architecture only deals with 16 bits, the value is split into 4 parts that can be read separately.
 
 The counter refers to the custom component that determines the offset the Assembler reads from. This should read the current offset.
 

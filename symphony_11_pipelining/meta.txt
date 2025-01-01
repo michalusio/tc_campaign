@@ -9,7 +9,7 @@ size = [-256, -256, 255, 255]
 dialogue = [
   (alien, `Finally it is time for you to implement the first optimization, pipelining. 
 
-Pipelining is a way to reduce delay, by splitting the architecture into seperate stages. In this level you will use Delay Line components given to you to split the circuit into three seperate parts. This way, we roughly lower the delay by two thirds, but each instruction takes three ticks to go through all three stages. 
+Pipelining is a way to reduce delay, by splitting the architecture into separate stages. In this level you will use Delay Line components given to you to split the circuit into three separate parts. This way, we roughly lower the delay by two thirds, but each instruction takes three ticks to go through all three stages. 
 
 Even though it takes one instruction 3 ticks to complete, the architecture can complete one instruction each tick. This is because three instructions can be processed in parallel in the pipeline simultaneously, one at each stage.`)
     (info, `These are the three stage:
@@ -25,7 +25,7 @@ The first two ticks, no instructions finish the last stage, as we are still fill
   (info, `The first thing you need to do in this level is to replace the "RAM" component with the "Fast RAM", since the delay of the current RAM component is higher than our limit of 60. 
 
 Unfortunately we get the unacceptably high gate score of Fast RAM instead, but we can deal with that later.`),  
-  (info, `The instruction that reads the counter, does so in the second stage. You need to delay the counter value by one tick to make sure it returns the counter value at the time when that instruction was loaded from the assembler.`),
+  (info, `The instruction that reads the counter does so in the second stage. You need to delay the counter value by one tick to make sure it returns the counter value at the time when that instruction was loaded from the assembler.`),
   (info, `Register loads happen in stage 2, while register stores happen in stage 3.
 
 [img]dialogue/symphony_diagram_3.png[/img]

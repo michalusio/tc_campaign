@@ -9,9 +9,9 @@ components_available = [com_static_indexer: 7]
 unlocks_components = [com_splitter_word_2, com_splitter_word_4, com_splitter_word_8, com_maker_word_2, com_maker_word_4, com_maker_word_8, com_static_indexer, com_static_indexer_config, com_concatenator_2, com_concatenator_4, com_concatenator_8]
 dialogue = [
   (info, `
-Build a circuit that splits Symphony instructions into its different parts. This will be very helpful later.
+Build a circuit that splits Symphony instructions into their different parts. This will be very helpful later.
 
-There are two encodings for Symphony instructions, depending on wether we are using immediate values or not:
+There are two encodings for Symphony instructions, depending on whether we are using immediate values or not:
 
 [code][color=#ff9800]M[/color] = Mode
 [color=#ff6680]O[/color] = Opcode

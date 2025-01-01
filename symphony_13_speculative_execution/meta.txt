@@ -19,7 +19,7 @@ To implement speculative execution, do the following:
 1: Remove the JUMP timer from stage 1.
 2: When a JUMP is taken, disable stage 3 for two ticks.
 
-Note, the first instruction should always execute, but this wont be the case in later levels.
+Note - The first instruction should always execute, but this won't be the case in later levels.
 `)]
 default_isa_spec = `
 
