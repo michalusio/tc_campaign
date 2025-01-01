@@ -1,0 +1,34 @@
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    inputs[0] = tick
+
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    var i = 0
+    while i < 4 {
+
+        if i == tick && outputs[i] != 1 {
+
+            set_error(`Expected output {i} to be ON`)
+            return fail
+
+        }
+
+        if i != tick && outputs[i] != 0 {
+
+            set_error(`Expected output {i} to be OFF`)
+            return fail
+
+        }
+
+        i += 1
+
+    }
+
+    if tick == 3 {
+        return win
+    }
+
+}

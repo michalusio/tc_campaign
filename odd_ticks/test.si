@@ -1,0 +1,9 @@
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {}
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+    if outputs[0] != tick % 2 {
+        return fail
+    }
+    if tick == 7 {
+        return win
+    }
+}

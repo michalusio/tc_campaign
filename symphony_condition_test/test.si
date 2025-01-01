@@ -1,0 +1,31 @@
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var x = tick
+    x ^= x << 1
+    x ^= x >> 1
+    x ^= x << 2
+    inputs[0] = x & 0b111
+    inputs[1] = (x >> 3) & 0b1111
+
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    let match  = (inputs[0] & inputs[1]) > 0
+    let result = match != ((inputs[1] & 0b1000) > 0)
+
+    if <Bool> outputs[0] != result {
+
+        set_error(`The correct output is {<U1>result}`)
+        return fail
+
+    }
+
+    if tick == 0xff {
+
+        return win
+
+    }
+
+}

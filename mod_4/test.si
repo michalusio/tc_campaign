@@ -1,0 +1,31 @@
+
+def on_reset($scratch_space: [Int], test: Int) {
+    scratch_space[0] = random(256)
+}
+
+def arch_get_input($scratch_space: [Int], test: Int) Int {
+    return scratch_space[0]
+}
+
+def arch_check_output($scratch_space: [Int], test: Int, input: Int, output: Int) TestResult {
+
+    if input == Z_STATE {
+        set_error(`Request the input first.`)
+        return fail
+    }
+
+    if output != input % 4 {
+        set_error(`{input} mod 4 is {input % 4}.`)
+        return fail
+    }
+
+    if get_tick() > 8 {
+
+        set_error(`You must output the result before tick 8!`)
+        return fail
+
+    }
+
+    return win
+
+}

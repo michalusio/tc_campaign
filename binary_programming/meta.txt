@@ -1,0 +1,12 @@
+kind = sequential
+title = "Add 5"
+tests = 32
+size = [-75, -50, 43, 45]
+copy_solution_to_level = ["assembly_programming"]
+unlocks_pages = ["Assembler"]
+dialogue = [
+  (alien_centered, "Now that we can't eat you, the captain has decided to drop you off at the local zoo when we arive at Glorflon Prime."),
+  (alien_centered, "Would you mind helping out on the ship in the meantime?"),
+  (info, `Click on the "edit" button on the program component to start programming your computer. Your computer should read an input, add 5 to it and output it again (no need to worry about overflow).`),
+  (overture),
+]

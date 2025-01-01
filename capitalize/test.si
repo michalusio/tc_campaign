@@ -1,0 +1,84 @@
+
+const INPUT_CURSOR    = 0
+const OUTPUT_CURSOR   = 1
+const TEXT_LEN        = 2
+const TEXT            = 3
+
+
+
+def on_reset($scratch_space: [Int], test: Int) {
+
+    const PLANET_NAMES = ["arev","bilak-par","smusma","faltorvoh","gespar","k'ohnar","kaliffee","karifar","katra","keethera","koonutkaliffee","koonutso'lik","kroykah","l'takterai","lematya","navorkot","nirak","nome","plak-tow","pleenok","pok-tar","pyllora","qui'lari","sehlat","shonha'lock","soolak","surah'tahn","suusmahna","t'sans'at","talshaya","tasmeen","vokau","v'shar","v'tosh-ka'tur","vokaya","faltorpan","fullara","kahswan","kal-rekk","pon-farr","rumarie","talshanar","taruletek","tokmar"]
+
+    let text = `{sample(PLANET_NAMES)} {sample(PLANET_NAMES)} {sample(PLANET_NAMES)} {sample(PLANET_NAMES)} {sample(PLANET_NAMES)} {sample(PLANET_NAMES)} {sample(PLANET_NAMES)} {sample(PLANET_NAMES)}`
+
+    let len = text.len()
+    scratch_space[TEXT_LEN] = len
+
+    var i = 0
+    while i < len {
+
+        scratch_space[TEXT + i] = <Int> (<U8> text[i])
+        i += 1
+
+    }
+
+    ui_set_hidden("pointer", true)
+    ui_set_text("text", text)
+
+}
+
+def arch_get_input($scratch_space: [Int], test: Int) Int {
+
+    let cursor = scratch_space[INPUT_CURSOR]
+    _reg_alloc_use cursor
+    scratch_space[INPUT_CURSOR] += 1
+    let len = scratch_space[TEXT_LEN]
+
+    ui_set_position("pointer", -6 * len + 5 + cursor * 12, 95)
+    ui_set_hidden("pointer", false)
+
+    return scratch_space[TEXT + cursor]
+
+}
+
+def arch_check_output($scratch_space: [Int], test: Int, input: Int, output: Int) TestResult {
+
+    if scratch_space[OUTPUT_CURSOR] > scratch_space[INPUT_CURSOR] {
+
+        set_error(`You did not read character {scratch_space[OUTPUT_CURSOR]} from the string yet`)
+        return fail
+
+    }
+
+    let output_cursor = scratch_space[OUTPUT_CURSOR]
+    var char = scratch_space[TEXT + output_cursor]
+
+    if output_cursor == 0 {
+
+        char ^= 32 // Capitalize first char
+
+    } elif scratch_space[TEXT + output_cursor - 1] == 32 {
+
+        char ^= 32 // Capitalize
+
+    }
+
+
+    if output != char {
+
+        set_error(`Output should have been "{<Char> char}" ({char}), not "{<Char> output}" ({output})`)
+        return fail
+
+    }
+
+    scratch_space[OUTPUT_CURSOR] += 1
+
+    if scratch_space[OUTPUT_CURSOR] == scratch_space[TEXT_LEN] {
+
+        return win
+
+    }
+
+}
+

@@ -1,0 +1,104 @@
+kind = sequential
+title = "Add 5 again"
+tests = 32
+size = [-75, -50, 43, 45]
+remove_components = [com_front_panel]
+add_components = [com_assembler: -1]
+unlocks_components = [com_assembler]
+copy_solution_to_architecture = "Overture"
+dialogue = [
+  (alien_centered, "Programming by setting bits manually tedious. We need you to learn assembly programming."),
+  (alien_centered, `I replaced the front panel component with an assembly component that looks almost identical. Click on the "edit" button to start programming in assembly. This level is identical to the last, read an input add 5 and move it to output.`),
+  (overture),
+]
+default_isa_spec = `
+
+[settings]
+name = "Overture"
+
+[fields]
+
+register
+r0 000
+r1 001
+r2 010
+r3 011
+r4 100
+r5 101
+in 110
+out 110
+
+[instructions]
+
+mov %a(register), %b(register)
+10bbbaaa
+Moves a value from %b to %a.
+
+imm %a(immediate | label)
+00aaaaaa
+Moves %a to r0.
+
+nand
+01000000
+NAND r1 and r2 and store the result in r3.
+
+or
+01000001
+OR r1 and r2 and store the result in r3.
+
+and
+01000010
+AND r1 and r2 and store the result in r3.
+
+nor
+01000011
+NOR r1 and r2 and store the result in r3.
+
+add
+01000100
+ADD r1 and r2 and store the result in r3.
+
+sub
+01000101
+SUB r1 and r2 and store the result in r3.
+
+nop
+11000000
+Does nothing.
+
+jmp
+11000001
+Jump to r0.
+
+jz
+11000010
+Jump to r0 if r3 is 0.
+
+jnz
+11000011
+Jump to r0 if r3 is not 0.
+
+jl
+11000100
+Jump to r0 if r3 is less than 0.
+
+jge
+11000101
+Jump to r0 if r3 is greater or equal to 0.
+
+jle
+11000110
+Jump to r0 if r3 is less or equal to 0.
+
+jg
+11000111
+Jump to r0 if r3 is greater than 0.
+
+`
+default_assembly = `; This is a comment
+
+mov r2, in ; Copies input to reg 2
+
+; <- Click "Assembly" to see all instructions
+
+`

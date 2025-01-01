@@ -1,0 +1,50 @@
+
+// Indexes
+const MIN = 0
+const MAX = 1
+const OVER = 2
+
+def on_reset($scratch_space: [Int], test: Int) {
+    scratch_space[MAX] = 255 // Inclusive
+}
+
+def arch_get_input($scratch_space: [Int], test: Int) Int {
+    return scratch_space[OVER]
+}
+
+def arch_check_output($scratch_space: [Int], test: Int, input: Int, output: Int) TestResult {
+
+    if scratch_space[MIN] + 1 >= scratch_space[MAX] {
+
+        // The value is pinned down
+
+        if scratch_space[MIN] == output {
+            return win
+        }
+
+        scratch_space[OVER] = <Int> (output > scratch_space[MIN])
+
+        return pass
+    }
+
+    if output < scratch_space[MIN] {
+        scratch_space[OVER] = 0
+
+    } elif output > scratch_space[MAX] {
+        scratch_space[OVER] = 1
+
+    } else {
+
+        let sample = scratch_space[MIN] + random(scratch_space[MAX] - scratch_space[MIN] - 1) + 1
+
+        if output < sample {
+            scratch_space[MIN]  = output + 1
+            scratch_space[OVER] = 1
+        } else {
+            scratch_space[MAX]  = output - 1
+            scratch_space[OVER] = 0
+        }
+
+    }
+
+}

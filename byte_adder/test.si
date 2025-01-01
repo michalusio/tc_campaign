@@ -1,0 +1,30 @@
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var x = tick
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    inputs[0] = x & 0xff
+    inputs[1] = (x >> 8) & 0xff
+    inputs[2] = (x >> 16) & 1
+
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+    
+    var sum = inputs[0] + inputs[1] + inputs[2]
+    var car = <Int> (<U64> (sum > 0xff))
+
+    if outputs[1] == (sum & 0xff) && outputs[0] == car {
+
+        if tick == 0xffff {
+            return win
+        }
+      
+    } else {
+
+        return fail
+
+    }
+}

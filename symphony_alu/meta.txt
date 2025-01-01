@@ -1,0 +1,24 @@
+kind = combinational
+title = "Symphony ALU"
+size = [-48, -48, 49, 49]
+save_solution_as_custom = "Symphony/ALU"
+input_labels = [["Operand"], ["Input 1"], ["Input 2"]]
+output_labels = ["Output"]
+background = 6
+dialogue = [
+  (info, "This is a copy of the Overture ALU. Time to upgrade it to 16 bits and a few new instructions.
+
+Instructions:
+[code][color=#87a8c8]0 NAND
+1 OR
+2 AND
+3 NOR
+4 ADD
+5 SUB
+6 XOR
+7 LSL
+8 LSR
+9 CMP[/color][/code]
+
+The cmp operation is the one you already created a custom component for in the previous level"),
+]

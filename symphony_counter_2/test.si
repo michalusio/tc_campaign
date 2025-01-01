@@ -1,0 +1,59 @@
+
+const MEMORY = 0
+
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    let overwrite = random(2)
+    let value = random(0xfffc)
+
+    inputs[0] = overwrite
+    inputs[1] = value
+    inputs[2] = random(2)
+
+}
+
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    if outputs[0] == Z_STATE {
+
+        set_error(`Output should never be Z`)
+        return fail
+
+    }
+
+    if outputs[0] != scratch_space[MEMORY] {
+
+        set_error(`Output should be {scratch_space[MEMORY]}`)
+        return fail
+
+    }
+
+    if tick == 0xffff {
+
+        if get_delay_score() >= 60 {
+
+            set_error(`Your solution is correct, but delay should be less than 60.`)
+            return fail
+
+        }
+
+        return win
+
+    }
+
+    if inputs[0] == 0 {
+        if inputs[2] == 0 {
+
+            scratch_space[MEMORY] += 4
+
+        }
+
+    } else {
+
+        scratch_space[MEMORY] = inputs[1]
+
+    }
+
+}

@@ -1,0 +1,1095 @@
+kind = sequential
+no_score = true
+title = "Integrating ALU"
+size = [-256, -256, 255, 255]
+copy_solution_to_level = ["symphony_4_immediates"]
+immutable_program = true
+immutable_spec = true
+dialogue = [
+  (info, `Add the ALU you built in the previous level to the circuit. The operation of each instruction is encoded in the [color=#ff6680]Opcode[/color].
+
+[code][color=#ff9800]M[/color] = Mode
+[color=#ff6680]O[/color] = Opcode
+[color=#ffe666]D[/color] = Destination register
+[color=#66ff99]A[/color] = Argument A
+[color=#66ccff]B[/color] = Argument B
+[color=#bbbbbb]0[/color] = Unused / zero[/code]
+
+[code][color=#ff9800]MM[/color][color=#bbbbbb]00[/color][color=#ff6680]OOOO[/color] [color=#bbbbbb]0[/color][color=#ffe666]DDD[/color][color=#bbbbbb]0[/color][color=#66ff99]AAA[/color] [color=#bbbbbb]00000[/color][color=#66ccff]BBB[/color] [color=#bbbbbb]00000000[/color][/code]
+`)]
+default_isa_spec = `
+
+[settings]
+name = "Symphony"
+
+[fields]
+
+register
+zr 000
+r1 001
+r2 010
+r3 011
+r4 100
+r5 101
+sp 110
+flags 111
+
+[instructions]
+
+or %a(register), %b(register), %c(register)
+01000001 0aaa0bbb 00000ccc 00000000
+OR %b and %c and store the result in %a.
+
+nand %a(register), %b(register), %c(register)
+01000000 0aaa0bbb 00000ccc 00000000
+NAND %b and %c and store the result in %a.
+
+nor %a(register), %b(register), %c(register)
+01000011 0aaa0bbb 00000ccc 00000000
+NOR %b and %c and store the result in %a.
+
+and %a(register), %b(register), %c(register)
+01000010 0aaa0bbb 00000ccc 00000000
+AND %b and %c and store the result in %a.
+
+add %a(register), %b(register), %c(register)
+01000100 0aaa0bbb 00000ccc 00000000
+ADD %b and %c and store the result in %a.
+
+sub %a(register), %b(register), %c(register)
+01000101 0aaa0bbb 00000ccc 00000000
+SUB %b and %c and store the result in %a.
+
+xor %a(register), %b(register), %c(register)
+01000110 0aaa0bbb 00000ccc 00000000
+XOR %b and %c and store the result in %a.
+
+lsl %a(register), %b(register), %c(register)
+01000111 0aaa0bbb 00000ccc 00000000
+LSL %b and %c and store the result in %a.
+
+lsr %a(register), %b(register), %c(register)
+01001000 0aaa0bbb 00000ccc 00000000
+LSR %b and %c and store the result in %a.
+
+cmp %a(register), %b(register)
+01001001 01110aaa 00000bbb 00000000
+Compares %a and %b and store the resulting flags in r6.
+
+in %a(register)
+00000001 0aaa0000 00000000 00000000
+Loads an input and stores it in %a
+
+out %a(register)
+00000010 00000000 00000aaa 00000000
+Sends %a to output
+
+nop
+00000000 00000000 00000000 00000000
+Does nothing
+
+
+`
+default_assembly = `in r3
+sub r1, r2, r3
+xor flags, r2, r2
+or sp, sp, flags
+xor r5, r3, sp
+out r5
+in r2
+cmp r4, sp
+cmp r2, r5
+add zr, r4, r5
+in sp
+out flags
+lsl r5, r3, sp
+in r4
+out zr
+sub r5, flags, r5
+out r2
+out sp
+in sp
+out flags
+lsl r1, r4, r5
+add r4, r4, r5
+cmp r5, sp
+in r4
+lsr r2, r3, sp
+out r4
+sub r2, r4, r1
+out r4
+in flags
+out sp
+or flags, r1, zr
+add zr, r5, flags
+out zr
+out flags
+in sp
+in flags
+lsl zr, r1, r5
+add sp, r2, sp
+out sp
+out r4
+nand r3, r4, zr
+in r2
+and zr, r4, flags
+in r5
+sub r2, sp, sp
+out flags
+in r1
+in r2
+out r5
+in r2
+out flags
+in r3
+sub r1, r1, r1
+out r5
+in r2
+out r2
+cmp sp, r4
+add r1, sp, zr
+and r2, r3, sp
+in r1
+out r3
+out r4
+add r5, r1, r1
+out r1
+out r5
+in flags
+in r1
+cmp r4, r2
+xor sp, r3, r1
+nand sp, r1, r3
+in r3
+cmp r1, zr
+in zr
+out r4
+in zr
+lsr r1, r1, sp
+or r4, flags, r3
+and sp, r2, flags
+in r1
+lsr r5, r1, r3
+out flags
+out sp
+cmp sp, r3
+nor zr, zr, zr
+in r3
+out r3
+or sp, r2, r3
+out flags
+sub r4, r1, zr
+xor sp, r2, r2
+in r2
+out r3
+in sp
+out r5
+nor sp, r3, r5
+nand r4, r5, r5
+in sp
+and flags, r5, r3
+lsr r4, r4, r1
+out r1
+and sp, r5, r1
+xor zr, r1, r2
+in r1
+sub r4, r1, r1
+lsl r5, r3, flags
+lsr r4, zr, r1
+nand r5, r1, r2
+nor zr, r3, zr
+xor r2, r4, r3
+out r3
+out r3
+out r1
+cmp flags, r1
+sub r2, r2, r2
+nand r4, r1, zr
+and sp, r3, sp
+nand r5, r1, r4
+lsl r4, zr, r4
+xor zr, sp, r3
+in r2
+in r1
+in r2
+lsr r4, zr, r1
+in r3
+cmp flags, r4
+sub flags, r2, sp
+add r2, r5, r2
+in zr
+out flags
+in flags
+out r4
+in flags
+and r5, r1, r5
+in r4
+in zr
+out zr
+cmp sp, r2
+nand r4, r2, r1
+sub r4, r2, zr
+lsl r1, zr, r4
+in sp
+in r5
+lsl sp, r5, zr
+or r5, flags, sp
+nor r4, r2, r1
+nor r3, r4, r3
+in r5
+out zr
+out r3
+in r2
+and r5, r2, r3
+or r1, zr, r4
+out r1
+out r4
+in r2
+nand r3, zr, zr
+in r2
+in r1
+in flags
+xor r1, r5, r3
+add zr, flags, sp
+and sp, flags, sp
+xor r3, r1, flags
+in r1
+in zr
+in r2
+in zr
+or r4, r5, r4
+out sp
+cmp r4, flags
+add sp, flags, r1
+lsl r1, r4, r4
+or r5, r3, zr
+out flags
+in r1
+out sp
+out r5
+or r1, r2, sp
+in flags
+or flags, r5, r2
+out r4
+out r4
+add r1, r4, flags
+nor r4, sp, r4
+out zr
+out zr
+sub flags, r3, r1
+nor r5, r3, zr
+in r5
+lsr r2, r1, sp
+cmp flags, r3
+sub r4, r3, r4
+in flags
+nor zr, zr, r2
+lsl r5, flags, r4
+in r3
+in r1
+or zr, r4, r3
+lsr r1, r1, r2
+lsl r5, r3, r1
+in r4
+or r5, r5, r1
+in r2
+out r4
+nor r4, zr, r3
+in zr
+out zr
+nor r4, r4, r3
+cmp flags, r1
+sub r3, r1, r1
+out r3
+out zr
+cmp r5, r5
+lsl r1, r1, zr
+out zr
+out sp
+out r4
+out zr
+nor r4, r1, r1
+and zr, r2, r1
+out flags
+out r2
+out r4
+out r4
+out r3
+or r2, r3, zr
+in r5
+out zr
+cmp r5, r4
+or r4, r2, r2
+out r4
+in r4
+lsr r4, r1, flags
+xor r5, r1, r5
+in r2
+xor r1, r1, r5
+in flags
+in r3
+lsl flags, flags, r2
+out sp
+nor sp, r4, sp
+and r2, sp, r1
+sub r1, r1, r1
+in r4
+and zr, zr, r4
+in sp
+sub r4, r4, r4
+add sp, r2, r1
+or r3, flags, r1
+lsl zr, sp, zr
+out sp
+out r3
+nand r3, r3, r1
+nor sp, flags, sp
+nor r5, r3, sp
+nand flags, r4, r5
+out r1
+add flags, sp, r2
+out sp
+add r5, r5, r2
+add r1, r1, r2
+add r3, r1, flags
+out sp
+out r2
+nor r5, sp, flags
+in r2
+sub r2, flags, r1
+out r4
+out r5
+in zr
+out sp
+lsl flags, r4, r3
+in r5
+lsl r2, flags, flags
+nand r1, r2, zr
+out r2
+cmp zr, r3
+in r2
+or r2, flags, zr
+in r2
+nand sp, flags, r1
+out r3
+cmp flags, r1
+in r4
+in r1
+out r2
+or sp, sp, r2
+and r1, r2, flags
+nand flags, zr, r1
+and r5, r5, sp
+in r1
+in r2
+and r5, r5, r4
+cmp flags, r4
+lsl r2, r2, r3
+in flags
+xor r3, r4, r5
+out r3
+and zr, flags, zr
+nor r5, sp, zr
+lsr r3, flags, r5
+in r5
+out flags
+cmp flags, r3
+in r1
+out r1
+in r2
+in r4
+add r4, r1, r1
+out r3
+lsr r2, flags, flags
+sub r1, r5, sp
+in sp
+xor zr, r2, sp
+in flags
+out r4
+out zr
+and zr, r1, r1
+out sp
+in r4
+lsr r3, r5, r3
+sub r4, zr, r2
+out r4
+lsr r4, r2, zr
+and r1, sp, sp
+nor sp, zr, r2
+out r1
+lsr r2, r5, r3
+add r4, r5, zr
+in zr
+out r5
+in r1
+out r2
+xor r1, r1, r2
+in flags
+xor r3, flags, r1
+cmp r2, zr
+cmp zr, flags
+nor sp, flags, zr
+add r1, zr, r4
+sub r1, r5, flags
+in zr
+add r4, r1, r3
+lsl flags, sp, sp
+in r1
+add r5, r5, r4
+out r4
+nand sp, flags, r2
+lsl r3, r5, r5
+and r4, r2, r3
+or r4, sp, zr
+in r5
+out sp
+out r3
+out r3
+nand r5, r4, r1
+nor sp, r4, zr
+xor r4, r1, r2
+and r2, r5, zr
+xor sp, sp, r4
+nand r5, r5, r5
+out r3
+nand r4, flags, r5
+out r3
+lsl r5, zr, r4
+sub r3, zr, zr
+out flags
+in r3
+in r1
+cmp flags, r2
+in r1
+add r1, zr, r4
+out r4
+nor sp, r5, r4
+in r2
+and zr, r2, r3
+nand r5, r5, zr
+out flags
+lsr r2, r3, r1
+or r2, r2, r1
+cmp r1, r4
+lsl flags, flags, r3
+lsl sp, r1, zr
+in r3
+or zr, r2, r4
+out r5
+lsr r2, r2, r1
+lsl zr, r3, flags
+in r1
+lsr flags, r4, sp
+lsl sp, r2, r3
+in sp
+cmp zr, sp
+in r2
+out sp
+and r2, r3, r3
+in r3
+out flags
+and r3, r3, r1
+lsr r3, flags, r3
+lsr r5, zr, r4
+in r1
+nor r1, r1, r1
+lsl r3, sp, zr
+in zr
+add r3, flags, flags
+cmp r1, r1
+add zr, flags, r1
+nor zr, r4, r2
+in r2
+or r2, sp, sp
+cmp r5, r4
+out r3
+and zr, flags, r3
+lsl r3, r1, zr
+out zr
+in sp
+add r1, r5, flags
+in r5
+out flags
+add sp, flags, flags
+and r2, r4, r4
+or flags, r3, r3
+in r3
+in r1
+lsl sp, r2, r4
+out r2
+in r1
+in r3
+add r3, r1, r5
+nand r2, r4, r3
+nor flags, r5, zr
+xor r3, zr, r5
+in sp
+and zr, r4, r5
+cmp r1, r3
+or r2, sp, r1
+sub r5, r1, r2
+nand r4, r2, r2
+lsl r2, flags, zr
+in r4
+out r4
+out zr
+out r4
+add r3, r3, r1
+in zr
+in r3
+sub r4, sp, sp
+add r5, flags, r5
+in flags
+add r1, zr, r5
+out r1
+in flags
+out r4
+in flags
+in r3
+or r4, r2, r1
+in flags
+nand r4, r2, r5
+out r3
+out r2
+lsl flags, flags, sp
+sub r4, zr, r1
+sub sp, r5, zr
+sub r4, flags, r2
+in r5
+lsr flags, r1, r1
+nor zr, r1, r3
+sub r2, r3, r4
+lsl flags, r3, r2
+out r5
+in r4
+in zr
+in zr
+out sp
+cmp flags, r4
+in r1
+out r2
+xor r5, r3, r4
+sub r3, zr, r4
+out r3
+add r3, r2, zr
+out zr
+cmp r2, r2
+cmp r4, r2
+out sp
+lsl sp, sp, r5
+and r4, r2, r4
+out r5
+lsl r5, zr, zr
+out r5
+or r5, r5, r5
+nor r5, sp, r4
+sub sp, r3, flags
+in r1
+in sp
+and zr, r1, r5
+in r2
+sub sp, r5, r5
+out r4
+sub r5, sp, r5
+cmp r2, r1
+nand r1, r2, r5
+in r3
+nor r2, r2, zr
+out r4
+lsl r2, flags, r2
+cmp zr, r5
+out r3
+in r2
+xor r4, r5, r1
+lsr r4, r3, r3
+lsl r2, r1, flags
+lsl r5, r1, r5
+in r3
+nand r3, sp, r4
+and r5, r4, r1
+out r3
+or r5, r4, r3
+nand r4, flags, zr
+sub r4, r4, r1
+out zr
+out zr
+nand flags, r4, r5
+lsr r2, r1, r2
+out flags
+lsl flags, flags, r3
+in r4
+out r3
+lsl r5, r4, zr
+and sp, r3, r4
+and sp, r5, sp
+out r1
+add r1, r5, r2
+sub sp, r3, r1
+xor r5, sp, r2
+in r5
+sub flags, r4, r4
+or r3, r3, sp
+lsl r4, flags, r1
+in r3
+add r5, r3, flags
+nor r5, r3, sp
+add r2, r1, zr
+in r5
+cmp r3, sp
+out r5
+cmp r4, r1
+out r5
+in r2
+and r4, r3, r1
+nor sp, zr, r4
+in r4
+in r2
+out r2
+sub sp, zr, flags
+out r5
+in r2
+nor r4, r2, sp
+out r5
+sub r5, r5, r5
+out r4
+nor r1, sp, r5
+nand r3, r4, r1
+xor zr, r5, r4
+in r1
+in flags
+out r3
+add r2, r1, r5
+in r5
+out r4
+nand r1, r4, flags
+in r1
+or zr, sp, r3
+out r5
+out r1
+or r4, r4, r2
+lsr flags, r3, r4
+in r5
+in r2
+out r2
+or r1, flags, flags
+or flags, r2, r2
+cmp r5, flags
+out r4
+cmp r4, r3
+or sp, flags, zr
+out r1
+in r4
+out r1
+out flags
+out r4
+out sp
+out r4
+out r3
+in flags
+cmp r1, r3
+out r4
+nor r2, r4, flags
+lsl r5, r1, r5
+sub r4, r2, r2
+out r2
+in r1
+out sp
+lsr flags, flags, r5
+nand zr, zr, r5
+xor zr, r5, sp
+in r3
+nor r2, r3, r4
+and sp, r1, sp
+xor flags, flags, sp
+lsl r5, r2, r4
+cmp r2, zr
+in flags
+and r4, sp, flags
+lsl r1, r2, zr
+add sp, flags, r3
+add r1, r1, zr
+out r1
+out zr
+in r4
+cmp r3, flags
+or flags, r2, sp
+out flags
+and r3, r2, r5
+out r2
+out r2
+out r4
+sub r3, r4, r3
+in r5
+sub zr, r3, r1
+add r3, r5, sp
+nand sp, sp, zr
+out r2
+out flags
+out flags
+in zr
+nor r4, r1, r5
+in sp
+in flags
+cmp r4, r3
+out zr
+in r3
+nor r5, r5, r3
+and r1, r3, r2
+out r4
+out r4
+in sp
+nand flags, sp, zr
+nand r3, zr, r5
+lsr r3, sp, flags
+nor r5, sp, flags
+cmp sp, r2
+in r2
+out flags
+out r3
+add sp, r4, zr
+or r3, r3, r4
+xor r5, r3, flags
+in r3
+cmp sp, sp
+out sp
+or r3, zr, zr
+lsl r3, r1, sp
+in flags
+nor r3, r5, r4
+out r1
+xor r1, r5, flags
+nand r2, r3, r5
+cmp r5, r5
+lsr zr, zr, r1
+nor r1, r1, flags
+in flags
+lsr r3, r1, r4
+xor r4, flags, r5
+add r2, r5, r4
+nor zr, r3, zr
+add flags, flags, zr
+add r5, r1, r2
+lsl r5, flags, zr
+in zr
+out zr
+sub r4, zr, r4
+in r1
+lsr r1, r3, r4
+lsr r4, zr, sp
+lsl r4, r1, r4
+xor zr, sp, zr
+add flags, r5, r5
+out r3
+out r4
+out zr
+or r4, sp, flags
+out r3
+out r3
+in zr
+out zr
+and r4, r1, sp
+in sp
+in sp
+out r5
+xor r1, sp, r4
+lsr r4, r3, zr
+add flags, r5, r3
+in r5
+and flags, r1, r4
+in r3
+sub r1, r2, r3
+xor r1, sp, zr
+out flags
+in r2
+in r3
+sub r2, flags, sp
+cmp zr, zr
+out zr
+out r2
+in flags
+out r5
+in r4
+lsr r4, r1, r4
+cmp zr, r5
+in r4
+out sp
+in r5
+out r3
+or r3, r5, r3
+and r3, r3, r3
+out r5
+or r1, r5, r2
+cmp flags, r3
+in r4
+lsl r1, zr, r4
+out r3
+nor r4, flags, r5
+lsl r3, r5, r3
+sub zr, r4, zr
+out r4
+in r4
+out r3
+nand r5, r2, r3
+xor r3, r1, r3
+nand r1, zr, sp
+out flags
+out r3
+add flags, flags, flags
+sub flags, r2, zr
+out r1
+out zr
+in sp
+add zr, r3, sp
+and flags, zr, flags
+in r1
+out flags
+add r5, flags, r4
+in flags
+sub r3, zr, sp
+lsl r5, r2, sp
+out flags
+in zr
+out flags
+in r5
+and zr, r1, sp
+nand r2, r4, flags
+in zr
+in r5
+in r1
+out r4
+add r1, r4, r4
+in r3
+or r4, sp, r3
+out r3
+or zr, r1, r2
+or r3, r1, sp
+or r3, sp, r4
+in r3
+lsr r4, sp, r2
+in r2
+sub sp, r1, flags
+nand r2, r4, r4
+cmp flags, r3
+and r4, sp, r5
+out r2
+cmp r5, flags
+out sp
+in r1
+nor flags, r2, r1
+out sp
+in zr
+in flags
+out r4
+or sp, r2, r4
+in r2
+lsl r3, r3, r2
+add r3, r2, r2
+sub r4, r3, r4
+nand sp, flags, r5
+out r2
+lsr r1, sp, r4
+lsr zr, r3, r2
+in r3
+out r2
+in r1
+lsl r4, flags, flags
+lsr r5, sp, r5
+in sp
+in r3
+nor r2, flags, r2
+add zr, flags, sp
+out r4
+in r3
+out flags
+out r4
+cmp r2, r3
+lsr flags, r4, r5
+lsr zr, r5, zr
+add r4, r1, flags
+nor flags, r4, r2
+nand sp, r5, zr
+in r4
+or r5, r4, r4
+nor sp, r2, r1
+xor r5, r1, r3
+in r1
+in r2
+out r5
+add r5, r2, r1
+in r3
+in flags
+in flags
+nand sp, r5, r1
+in r1
+or zr, zr, flags
+nand r2, r4, zr
+in r3
+sub r4, sp, zr
+out r3
+in r2
+in r3
+in zr
+xor sp, r3, r4
+lsl r4, r1, sp
+in r5
+out sp
+out r5
+add r3, r1, zr
+out flags
+in r5
+xor sp, r4, r2
+in r1
+in r3
+nor r5, r5, zr
+and flags, flags, r3
+in sp
+out flags
+cmp sp, zr
+out r3
+lsl r5, sp, flags
+xor r4, r4, zr
+out r5
+in r3
+out r2
+and r3, sp, r2
+out sp
+sub zr, r1, zr
+xor r5, r2, r1
+lsr r4, r1, r2
+nand zr, flags, zr
+or r1, flags, flags
+in zr
+nand sp, r2, r1
+in sp
+cmp zr, r1
+in zr
+in r4
+lsl sp, r4, r1
+nor r3, zr, zr
+out r1
+in r1
+out r1
+and r5, r5, r5
+in sp
+cmp r4, sp
+in r3
+or flags, r5, r2
+out sp
+nand r1, r5, sp
+nor r3, r1, r2
+in sp
+lsr zr, zr, r2
+nor sp, zr, r3
+in r5
+out flags
+lsr flags, r1, r3
+and zr, sp, r2
+out r3
+in zr
+sub r4, r4, r3
+add r1, r3, sp
+in r4
+lsl sp, r5, flags
+in r4
+xor r3, r3, r5
+out r3
+and r4, flags, flags
+out r1
+out r4
+out flags
+and zr, zr, sp
+out r5
+in r2
+out flags
+in r2
+nand flags, r5, r2
+nand flags, r1, r1
+in flags
+in sp
+or flags, r2, r3
+out sp
+lsr r5, zr, r3
+cmp sp, r3
+in r3
+out r2
+or r2, r1, r3
+or r2, zr, r4
+in r4
+in r5
+in flags
+and r2, r3, zr
+out r2
+in zr
+nor r3, r5, r2
+in sp
+out r5
+in sp
+in r5
+out r2
+out r3
+in r5
+in zr
+xor flags, flags, flags
+or r2, flags, r4
+out sp
+out sp
+out r2
+in r2
+xor r2, r5, r5
+nor r3, r1, r5
+out r2
+out r2
+out flags
+in r4
+nor r5, r5, r4
+out r5
+lsl r2, r4, r3
+sub r2, r3, r4
+out r1
+in r1
+cmp r5, r3
+nand flags, r4, sp
+in sp
+sub flags, r1, flags
+out r5
+and r5, r3, r5
+nand sp, r1, r3
+nand r5, sp, r5
+add r2, r2, r3
+add r5, sp, r5
+out r3
+nand r1, r3, r2
+out sp
+xor r1, r4, zr
+in r5
+out r5
+in flags
+in sp
+and zr, r1, r4
+out sp
+out zr
+in r1
+in zr
+cmp r1, sp
+lsr r2, r4, r2
+nor r2, r1, zr
+nor r2, flags, r5
+nor flags, flags, r3
+out r4
+nor r5, r2, r1
+nand r1, r1, r3
+in r3
+out r2
+sub sp, r3, r2
+out r5
+out flags
+lsl zr, r2, r1
+in sp
+out r5
+nand r4, r4, r5
+lsr sp, zr, zr
+in r3
+xor r5, r5, r2
+or sp, flags, flags
+in r5
+`

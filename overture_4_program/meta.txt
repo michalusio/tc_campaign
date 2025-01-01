@@ -1,0 +1,13 @@
+kind = sequential
+immutable_program = true
+immutable_spec = true
+no_score = true
+title = "Program"
+size = [-75, -50, 43, 45]
+copy_solution_to_level = ["overture_5_conditionals"]
+dialogue = [
+  (info, "The [INSTRUCTION] input component has been removed. It has been replaced by a program component. Every tick, use the counter to load the next [INSTRUCTION] from the program's memory.
+  
+You must use the counter component you unlocked earlier for this level."),
+  (overture),
+]

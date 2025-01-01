@@ -1,0 +1,43 @@
+kind = sequential
+immutable_program = true
+immutable_spec = true
+no_score = true
+title = "Registers"
+size = [-43, -45, 43, 45]
+copy_solution_to_level = ["overture_2_alu"]
+dialogue = [
+  (alien_centered, `Time to create your master project, implementing the [color=#e49f44]Overture[/color] computer architecture. This will be an actual Turing complete machine, a true computer in every way!`),
+  (info, `In this level you need to create a circuit which can move from a [color=#c54d5e]source[/color] to a [color=#e49f44]destination[/color]. 
+
+The instruction byte in this level determines the [color=#c54d5e]source[/color] and the [color=#e49f44]destination[/color]. 
+
+Bits 1, 2 and 3 give the [color=#e49f44]destination[/color]. Bits 4, 5 and 6 give the [color=#c54d5e]source[/color].`),
+
+  (info, `[color=#c54d5e]Source[/color] and [color=#e49f44]destination[/color] can be 1 of 6 registers, we will name them REG 0 to REG 5 respectively. 
+  
+Additionally, this map has a dedicated input component, which can be the [color=#c54d5e]source[/color] and an output component, which can be the [color=#e49f44]destination[/color].`),
+  (info, `These are the bit patterns for each [color=#c54d5e]source[/color] and [color=#e49f44]destination[/color].
+
+[color=#c54d5e]Source[/color]:
+[OFF] [OFF] [OFF]  REG 0 
+[OFF] [OFF] [ON]  REG 1 
+[OFF] [ON] [OFF]  REG 2 
+[OFF] [ON] [ON]  REG 3 
+[ON] [OFF] [OFF]  REG 4 
+[ON] [OFF] [ON]  REG 5 
+[ON] [ON] [OFF]  INPUT 
+[ON] [ON] [ON]  UNUSED
+
+[color=#e49f44]Destination[/color]:
+[OFF] [OFF] [OFF]  REG 0 
+[OFF] [OFF] [ON]  REG 1 
+[OFF] [ON] [OFF]  REG 2 
+[OFF] [ON] [ON]  REG 3 
+[ON] [OFF] [OFF]  REG 4 
+[ON] [OFF] [ON]  REG 5 
+[ON] [ON] [OFF]  OUTPUT
+[ON] [ON] [ON]  UNUSED
+
+To get a more intuitive understanding of the requirements, click the [INSTRUCTION] icon in the upper left corner.`),
+  (overture),
+]

@@ -1,0 +1,15 @@
+kind = sequential
+immutable_program = true
+immutable_spec = true
+no_score = true
+title = "Immediate Values"
+size = [-43, -45, 43, 45]
+copy_solution_to_level = ["overture_4_program"]
+unlocks_components = [com_front_panel]
+dialogue = [
+  (info, "We need a way to directly move numbers from our program into registers. For this we use the immediate mode (when the two highest bits are [OFF][OFF]).
+
+When in immediate mode the whole byte is interpreted as a number that we [STORE] into REG 0. This means we can 
+[STORE] any value between 0 and 63."),
+  (overture),
+]

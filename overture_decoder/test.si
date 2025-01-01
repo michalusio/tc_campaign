@@ -1,0 +1,33 @@
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+    switch tick
+        0 {
+            inputs[0] = 0
+        }
+        1 {
+            inputs[0] = 64
+        }
+        2 {
+            inputs[0] = 128
+        }
+        3 {
+            inputs[0] = 192
+        }
+}
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    var i = 0
+    while i < 4 {
+        if i == tick {
+            if outputs[i] != 1 {
+                return fail
+            }
+        } elif outputs[i] != 0 {
+            return fail
+        }
+        i += 1
+    }
+        
+    if tick == 3 {
+        return win
+    }
+}

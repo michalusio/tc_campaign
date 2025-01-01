@@ -1,0 +1,82 @@
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var in = random(2)
+    var out = random(2)
+    var val1 = 0
+    var val2 = 0
+
+    if in == 0 {
+
+        val1 = random(256)
+
+    } else {
+
+        val2 = random(256)
+
+    }
+
+    inputs[0] = in
+    inputs[1] = val1
+    inputs[2] = val2
+    inputs[3] = out
+
+}
+
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    var val = 0
+
+    if inputs[0] == 0 {
+
+        val = inputs[1]
+
+    } else {
+
+        val = inputs[2]
+
+    }
+
+
+    if inputs[3] == 0 {
+
+        if outputs[0] != val { 
+
+            set_error(`Output 0 should be {val}.`)
+            return fail 
+
+        }
+
+        if outputs[1] != Z_STATE { 
+
+            set_error("Output 1 should be Z.")
+            return fail 
+
+        }
+
+    } else {
+
+        if outputs[0] != Z_STATE { 
+
+            set_error("Output 0 should be Z.")
+            return fail 
+
+        }
+
+        if outputs[1] != val { 
+
+            set_error(`Output 1 should be {val}.`)
+            return fail 
+
+        }
+
+    }
+
+    if tick == 32 {
+
+        return win
+
+    }
+
+}

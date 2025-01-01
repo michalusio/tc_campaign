@@ -1,0 +1,83 @@
+
+const MEMORY = 0
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    let store = random(2)
+    let value = random(0xffff + 1)
+
+    if store == 1 {
+        scratch_space[MEMORY] = value
+    }
+
+    inputs[0] = random(2)
+    inputs[1] = random(2)
+    inputs[2] = store
+    inputs[3] = value
+
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    if get_level_memory("count") != scratch_space[MEMORY] {
+
+        let memory_value = get_level_memory("count")
+
+        if memory_value == Z_STATE {
+
+            set_error(`Link the memory probe to a component`)
+            return fail
+
+        }
+
+        set_error(`Memory is supposed to be {scratch_space[MEMORY]}, not {get_probe_value()}`)
+        return fail
+
+    }
+
+    if inputs[0] == 1 {
+
+        if outputs[0] != scratch_space[MEMORY] {
+
+            set_error(`The first output should be {scratch_space[MEMORY]}`)
+            return fail
+
+        }
+
+    } elif outputs[0] != Z_STATE {
+
+        set_error(`The first output should be Z`)
+        return fail
+
+    }
+
+    if inputs[1] == 1 {
+
+        if outputs[1] != scratch_space[MEMORY] {
+
+            set_error(`The second output should be {scratch_space[MEMORY]}`)
+            return fail
+
+        }
+
+    } elif outputs[1] != Z_STATE {
+
+        set_error(`The second output should be Z`)
+        return fail
+
+    }
+
+    if tick == 0xffff {
+
+        if get_delay_score() >= 60 {
+
+            set_error(`Your solution is correct, but delay should be less than 60.`)
+            return fail
+
+        }
+
+        return win
+
+    }
+
+}

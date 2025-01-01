@@ -1,0 +1,16 @@
+kind = sequential
+title = "Symphony register"
+size = [-48, -48, 49, 49]
+background = 6
+copy_solution_to_level = ["symphony_register_2"]
+save_solution_as_custom = "Symphony/reg"
+input_labels = [["Load 0"], ["Load 1"], ["Store"], ["Store value"]]
+output_labels = ["Load 0", "Load 1"]
+add_components = [com_probe_memory_word: -1]
+dialogue = [
+    (alien_center, `In this level you build the custom component for registers you will be using in your next architecture, called [color=#e49f44]Symphony[/color].`),
+    (info, `Build a register that can load and output to two independent pins.`),
+    (info, `This register should store 16 bits instead of 8. Use the new width button on the left to change the width (right click on the button, to change it to 16)
+
+    Also, place a "memory probe" component and link it to your 16 bit memory. This will allow the value to be seen on our custom component after it is done.`),
+]

@@ -1,0 +1,63 @@
+
+const INPUT_CURSOR = 0
+const OUTPUT_CURSOR = 1
+const RAW_NUMBERS = 2
+const SORTED_NUMBERS = RAW_NUMBERS + 16
+
+def on_reset($scratch_space: [Int], test: Int) {
+
+    var numbers = array(16, 0)
+    
+    {
+        var i = 0
+        while i < 16 {
+            
+            let number = random(0xff)
+            numbers[i] = number
+            scratch_space[RAW_NUMBERS + i] = number
+            ui_set_image_name(`{i}`, `{random(49)}.png`)
+            ui_set_text(`text_{i}`, str(number))
+            i += 1
+
+        }
+    }
+
+    sort($numbers)
+
+    var i = 0
+    while i < 16 {
+
+        scratch_space[SORTED_NUMBERS + i] = numbers[i]
+        i += 1
+
+    }
+
+}
+
+def arch_get_input($scratch_space: [Int], test: Int) Int {
+
+    let cursor = scratch_space[INPUT_CURSOR]
+    scratch_space[INPUT_CURSOR] += 1
+    return scratch_space[RAW_NUMBERS + cursor]
+
+}
+
+def arch_check_output($scratch_space: [Int], test: Int, input: Int, output: Int) TestResult {
+
+    let cursor = scratch_space[OUTPUT_CURSOR]
+    scratch_space[OUTPUT_CURSOR] += 1
+
+    if output != scratch_space[SORTED_NUMBERS + cursor] {
+
+        set_error(`Index {cursor} in the sorted list should be {scratch_space[SORTED_NUMBERS + cursor]}, not {output}`)
+        return fail
+
+    }
+
+    if cursor == 15 {
+
+        return win
+
+    }
+
+}

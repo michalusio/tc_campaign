@@ -1,0 +1,212 @@
+const CARDS_TAKEN   = 0
+
+const PLAYER_CHOICE = 1
+const BOT_TO_MOVE   = 2
+
+def arch_get_input($scratch_space: [Int], test: Int) Int {
+
+    return 12 - scratch_space[CARDS_TAKEN]
+
+}
+
+def redraw(scratch_space: [Int]) {
+
+    let cards_left = 12 - scratch_space[CARDS_TAKEN]
+    let cards_not_raised = cards_left - scratch_space[PLAYER_CHOICE]
+
+    if cards_left <= 1 {
+
+        if scratch_space[BOT_TO_MOVE] == 0 {
+
+            ui_set_text("description", `You lost!`)
+            ui_set_hidden("nak02", true)
+            ui_set_hidden("nak02_win", false)
+
+        } else {
+
+            ui_set_text("description", `You won!`)
+            ui_set_hidden("nak02", true)
+            ui_set_hidden("nak02_lose", false)
+            ui_set_hidden("robot", true)
+            ui_set_hidden("robot_win", false)
+
+        }
+
+    } else {
+
+        ui_set_hidden("nak02", false)
+        ui_set_hidden("nak02_win", true)
+        ui_set_hidden("nak02_lose", true)
+        ui_set_hidden("robot", false)
+        ui_set_hidden("robot_win", true)
+
+        if scratch_space[BOT_TO_MOVE] == 1 {
+
+            ui_set_text("description", `Hit enter to see what NAK 02 does`)
+
+        } elif scratch_space[PLAYER_CHOICE] == 0 {
+
+            ui_set_text("description", `Use the arrow keys to take cards`)
+
+        } else {
+
+            ui_set_text("description", `Hit enter to take {scratch_space[PLAYER_CHOICE]} cards`)
+
+        }
+
+    }
+
+    var i = 0
+
+    while i < 12 {
+
+        let name = str(i)
+        ui_set_hidden(name, i >= cards_left)
+
+        if i < cards_not_raised {
+
+            ui_set_position(name, -330 + 60 * i, 90)
+
+        } else {
+
+            ui_set_position(name, -330 + 60 * i, 60)
+
+        }
+
+
+        i += 1
+
+    }
+
+}
+
+def bot_move($scratch_space: [Int]) {
+    
+    let cards_left = 12 - scratch_space[CARDS_TAKEN]
+    var bot_action = 0
+
+    switch cards_left
+        1  { return }
+        2  { bot_action = 1 }
+        3  { bot_action = 2 }
+        4  { bot_action = 3 }
+        5  { bot_action = 1 + random(2) }
+        6  { bot_action = 1 }
+        7  { bot_action = 2 }
+        8  { bot_action = 3 }
+        9  { bot_action = 1 + random(2) }
+        10 { bot_action = 1 }
+        11 { bot_action = 2 }
+
+    scratch_space[CARDS_TAKEN] += bot_action
+    scratch_space[BOT_TO_MOVE] = false
+
+}
+
+def on_manual_input($scratch_space: [Int], action: Int){
+
+    const ADD_CARD = 0
+    const REM_CARD = 2
+    const COMMIT   = 5
+
+    let cards_left = 12 - scratch_space[CARDS_TAKEN]
+    let bot_to_move = scratch_space[BOT_TO_MOVE] == 1
+
+    if cards_left <= 1 {
+    
+        return
+    
+    }
+    
+    if action != REM_CARD && action != ADD_CARD && action != COMMIT {
+        
+        return
+    
+    }
+
+    if bot_to_move && action != COMMIT {
+
+        return
+
+    }
+
+    if !bot_to_move && action == COMMIT && scratch_space[PLAYER_CHOICE] == 0 {
+
+        return
+
+    }
+
+    if action == ADD_CARD {
+
+        if scratch_space[PLAYER_CHOICE] == 3 || scratch_space[PLAYER_CHOICE] >= cards_left {
+
+            return
+
+        }
+
+        scratch_space[PLAYER_CHOICE] = scratch_space[PLAYER_CHOICE] + 1
+
+    } elif action == REM_CARD {
+
+        if scratch_space[PLAYER_CHOICE] <= 1 {
+
+            return
+
+        }
+
+        scratch_space[PLAYER_CHOICE] = scratch_space[PLAYER_CHOICE] - 1
+
+    } else {
+
+        if bot_to_move {
+
+            bot_move($scratch_space)
+
+        } else {
+
+            scratch_space[CARDS_TAKEN] += scratch_space[PLAYER_CHOICE]
+            scratch_space[PLAYER_CHOICE] = 0
+            scratch_space[BOT_TO_MOVE] = true
+    
+        }
+
+    }
+
+    redraw(scratch_space)
+
+}
+
+def arch_check_output($scratch_space: [Int], test: Int, input: Int, output: Int) TestResult {
+
+    let cards_left = 12 - scratch_space[CARDS_TAKEN]
+
+    if output == 0 || output > 3 {
+
+        set_error("You may only take 1, 2 or 3 cards")
+        return fail
+
+    }
+
+    if output >= cards_left {
+
+        scratch_space[CARDS_TAKEN] = 0
+        set_error("You took the last card")
+        return fail
+
+    }
+
+    scratch_space[CARDS_TAKEN] += output
+    
+    scratch_space[BOT_TO_MOVE] = true
+    bot_move($scratch_space)
+
+    redraw(scratch_space)
+
+    if scratch_space[CARDS_TAKEN] == 11 {
+
+        return scratch_space[BOT_TO_MOVE] == 1 ? win : fail
+
+    }
+
+}
+

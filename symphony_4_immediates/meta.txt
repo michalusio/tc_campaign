@@ -1,0 +1,1146 @@
+kind = sequential
+no_score = true
+title = "Immediates"
+size = [-256, -256, 255, 255]
+copy_solution_to_level = ["symphony_5_jumps"]
+immutable_program = true
+immutable_spec = true
+dialogue = [
+  (info, `Sometimes it is useful to load a value directly from the program instead of from registers. A value directly encoding into an instruction is called an immediate value. With [color=#e49f44]Symphony[/color], we can replace argument B with an immediate in any instruction. This is done by setting the forth bit to 1 and encode the value in the two last two bytes like so:
+
+[code]
+[color=#ff6680]O[/color] = Opcode
+[color=#ffe666]D[/color] = Destination register
+[color=#66ff99]A[/color] = Argument A
+[color=#66ccff]B[/color] = Argument B / immediate
+[color=#9966ff]I[/color] = Immediate bit
+[color=#bbbbbb]0[/color] = Unused / zero
+[/code]
+
+[code][color=#ff9800]MM[/color][color=#bbbbbb]O[/color][color=#9966ff]1[/color][color=#ff6680]OOOO[/color] [color=#bbbbbb]0[/color][color=#ffe666]DDD[/color][color=#bbbbbb]0[/color][color=#66ff99]AAA[/color] [color=#66ccff]BBBBBBBB BBBBBBBB[/color][/code]
+
+When not using an immediate, the [color=#9966ff]Immediate bit[/color] is set to 0 and the encoding is as before:
+  
+[code][color=#ff9800]MM[/color][color=#bbbbbb]O[/color][color=#9966ff]1[/color][color=#ff6680]OOOO[/color] [color=#bbbbbb]0[/color][color=#ffe666]DDD[/color][color=#bbbbbb]0[/color][color=#66ff99]AAA[/color] [color=#bbbbbb]00000[/color][color=#66ccff]BBB[/color] [color=#bbbbbb]00000000[/color][/code]
+`),
+(info, `Update the architecture to look like this diagram:
+
+[img]dialogue/symphony_diagram_2.png[/img]
+
+`),]
+default_isa_spec = `
+
+[settings]
+name = "Symphony"
+
+[fields]
+
+register
+zr 000
+r1 001
+r2 010
+r3 011
+r4 100
+r5 101
+sp 110
+flags 111
+
+[instructions]
+
+or %a(register), %b(register), %c(register)
+01000001 0aaa0bbb 00000ccc 00000000
+OR %b and %c and store the result in %a.
+
+nand %a(register), %b(register), %c(register)
+01000000 0aaa0bbb 00000ccc 00000000
+NAND %b and %c and store the result in %a.
+
+nor %a(register), %b(register), %c(register)
+01000011 0aaa0bbb 00000ccc 00000000
+NOR %b and %c and store the result in %a.
+
+and %a(register), %b(register), %c(register)
+01000010 0aaa0bbb 00000ccc 00000000
+AND %b and %c and store the result in %a.
+
+add %a(register), %b(register), %c(register)
+01000100 0aaa0bbb 00000ccc 00000000
+ADD %b and %c and store the result in %a.
+
+sub %a(register), %b(register), %c(register)
+01000101 0aaa0bbb 00000ccc 00000000
+SUB %b and %c and store the result in %a.
+
+xor %a(register), %b(register), %c(register)
+01000110 0aaa0bbb 00000ccc 00000000
+XOR %b and %c and store the result in %a.
+
+lsl %a(register), %b(register), %c(register)
+01000111 0aaa0bbb 00000ccc 00000000
+LSL %b and %c and store the result in %a.
+
+lsr %a(register), %b(register), %c(register)
+01001000 0aaa0bbb 00000ccc 00000000
+LSR %b and %c and store the result in %a.
+
+cmp %a(register), %b(register)
+01001001 01110aaa 00000bbb 00000000
+Compares %a and %b and store the resulting flags in r6.
+
+
+or %a(register), %b(register), %c(immediate)
+01010001 0aaa0bbb cccccccc cccccccc
+OR %b and %c and store the result in %a.
+
+nand %a(register), %b(register), %c(immediate)
+01010000 0aaa0bbb cccccccc cccccccc
+NAND %b and %c and store the result in %a.
+
+nor %a(register), %b(register), %c(immediate)
+01010011 0aaa0bbb cccccccc cccccccc
+NOR %b and %c and store the result in %a.
+
+and %a(register), %b(register), %c(immediate)
+01010010 0aaa0bbb cccccccc cccccccc
+AND %b and %c and store the result in %a.
+
+add %a(register), %b(register), %c(immediate)
+01010100 0aaa0bbb cccccccc cccccccc
+ADD %b and %c and store the result in %a.
+
+sub %a(register), %b(register), %c(immediate)
+01010101 0aaa0bbb cccccccc cccccccc
+SUB %b and %c and store the result in %a.
+
+xor %a(register), %b(register), %c(immediate)
+01010110 0aaa0bbb cccccccc cccccccc
+XOR %b and %c and store the result in %a.
+
+lsl %a(register), %b(register), %c(immediate)
+01010111 0aaa0bbb cccccccc cccccccc
+LSL %b and %c and store the result in %a.
+
+lsr %a(register), %b(register), %c(immediate)
+01011000 0aaa0bbb cccccccc cccccccc
+LSR %b and %c and store the result in %a.
+
+cmp %a(register), %b(immediate)
+01011001 01110aaa bbbbbbbb bbbbbbbb
+Compares %a and %b and store the resulting flags in r6.
+
+in %a(register)
+00000001 0aaa0000 00000000 00000000
+Loads an input and stores it in %a
+
+out %a(register)
+00000010 00000000 00000aaa 00000000
+Sends %a to output
+
+nop
+00000000 00000000 00000000 00000000
+Does nothing
+
+
+`
+default_assembly = `lsr r5, r5, 42940
+or r2, r4, 57290
+out zr
+out zr
+in r5
+cmp r4, sp
+lsr r2, r5, r5
+xor r5, r4, zr
+out r1
+or r1, zr, 28371
+in r5
+out zr
+out flags
+or r5, r5, flags
+add r5, flags, flags
+and zr, flags, 10429
+in sp
+add r4, r4, 38471
+out r5
+in r3
+or r2, r4, 12
+out r5
+out flags
+in flags
+or r5, r5, 14673
+in zr
+out r1
+in r3
+in flags
+in flags
+nor r1, r5, sp
+or sp, r4, zr
+out r1
+in r5
+out flags
+and zr, r4, flags
+in r2
+lsl sp, flags, r3
+nand sp, flags, 54697
+in r2
+nor r3, r5, 2212
+in r2
+out r5
+out r3
+in r1
+in r3
+or r1, r2, r5
+cmp sp, 63142
+in sp
+out sp
+out zr
+out r3
+out zr
+out r1
+out sp
+and r5, r5, 26881
+in r3
+cmp r2, sp
+add zr, sp, r1
+in r3
+out r1
+or r3, zr, r4
+out r2
+in sp
+xor sp, r4, flags
+and sp, r2, flags
+in r4
+out r3
+out r1
+out flags
+in sp
+in r3
+in r1
+cmp r4, r2
+and r1, r5, 24004
+in flags
+cmp r2, 41832
+out r3
+nand r2, sp, 17438
+add r2, r1, 35736
+out r2
+out r1
+lsr r2, flags, r5
+lsr r4, r4, 28742
+in flags
+in r1
+or r4, r4, 31001
+lsl r2, zr, 51065
+in sp
+lsr r4, zr, 60162
+in r1
+in zr
+in r1
+cmp r3, 31493
+out r5
+cmp flags, 60002
+xor r2, r2, flags
+in zr
+sub zr, r1, 24557
+in r1
+out r4
+in r2
+out r3
+nor r1, r5, r4
+out r4
+in r4
+in r2
+add r2, r5, 21369
+lsl r2, r1, 27250
+sub r1, sp, 3949
+add zr, sp, 56140
+xor flags, r5, 29811
+sub zr, r5, 47197
+in r4
+lsl r2, r5, 45852
+in r2
+xor r4, r5, r4
+nor r5, r2, 28898
+out r4
+in sp
+in r4
+out zr
+lsr zr, r4, 53116
+sub sp, r2, 64676
+sub r1, r5, flags
+out zr
+out r1
+out r2
+in r2
+nand r4, flags, r1
+out r1
+in r2
+out zr
+out r4
+or r4, r4, 44487
+out r2
+and r2, zr, flags
+and sp, flags, sp
+out r1
+in r3
+out r1
+lsr sp, flags, zr
+cmp r4, 57820
+out sp
+lsr r4, flags, r2
+out r1
+nand r3, r5, zr
+lsr r2, r3, flags
+in flags
+out sp
+in r1
+nand sp, sp, 29201
+out sp
+lsl sp, r5, r4
+in r5
+add r1, r4, 4461
+sub sp, r4, flags
+in flags
+sub r2, r1, zr
+in r1
+lsr r3, r5, r5
+lsr r2, r1, sp
+xor flags, r3, zr
+out r4
+nor r3, r4, r2
+add sp, sp, r5
+out r1
+in r1
+xor r4, r3, flags
+out r2
+out zr
+out sp
+nand flags, r2, 64128
+out r4
+cmp r3, sp
+add r3, flags, sp
+nor zr, r1, zr
+out r2
+out r4
+out r3
+lsr r4, r4, 21797
+out r5
+nor r1, r5, 8176
+add r5, r3, sp
+in r5
+out zr
+add r1, r1, sp
+and r1, zr, r5
+lsl r1, r1, 7338
+out r1
+in r5
+out r3
+cmp zr, sp
+in zr
+lsl r5, r1, zr
+in r1
+nor r1, r4, flags
+in r4
+nor r1, flags, sp
+in r5
+cmp zr, zr
+or r2, r1, 65299
+lsr r3, r3, 34471
+lsl flags, flags, r2
+xor r3, sp, 17285
+xor sp, r4, r2
+out r5
+out r5
+nor r4, zr, 62644
+in sp
+nor r4, r4, r3
+nand r1, zr, r4
+in flags
+in r3
+out flags
+nand r3, r3, 54034
+or flags, sp, r2
+out sp
+in r1
+in r5
+lsl r3, sp, flags
+add r5, r5, 30922
+in r1
+in flags
+sub r1, r3, r5
+sub r3, r4, r5
+nor r1, r2, 16769
+sub r2, flags, r1
+lsl r5, r3, 25237
+in r1
+in r3
+and r1, zr, 13220
+out flags
+lsl r2, flags, flags
+out r2
+out flags
+out r4
+xor r2, zr, r2
+nor r5, r2, r5
+nand sp, flags, r1
+in zr
+in r1
+in flags
+in sp
+out sp
+and r1, r2, flags
+in zr
+out sp
+lsl r5, zr, r1
+in sp
+out zr
+lsl r2, r2, 48221
+in r5
+cmp flags, 2321
+out r1
+add r3, r2, r5
+lsl sp, r3, flags
+in r5
+in r4
+out r3
+in r2
+out r1
+cmp r4, r4
+add r4, r1, r1
+in flags
+out flags
+nand r2, r5, 14622
+add sp, sp, 6162
+lsl flags, flags, 34986
+out r4
+lsr r3, r4, 44447
+in r1
+xor zr, r3, 62244
+nand sp, zr, r3
+lsr sp, r4, zr
+out r4
+xor r2, zr, r4
+add sp, sp, 13868
+add r3, r4, r5
+out r1
+xor zr, r4, 14088
+in zr
+out r4
+in r3
+and r2, r3, r4
+nand sp, flags, flags
+lsl sp, r3, flags
+cmp r2, zr
+lsr zr, flags, flags
+out zr
+and flags, r4, sp
+or r5, flags, 23810
+xor zr, r4, 32995
+lsl flags, sp, sp
+in r1
+in r4
+and sp, flags, sp
+nand r3, sp, r3
+out r2
+or r4, sp, 31656
+out sp
+and r2, r3, r1
+in r1
+sub r5, r4, 52180
+out r2
+xor r4, r1, r2
+add r5, zr, r4
+cmp r1, sp
+in r1
+out r1
+out r5
+lsl r5, zr, 884
+out zr
+out r1
+lsl r1, r2, 24009
+add r4, zr, r5
+in flags
+add r1, zr, r4
+add flags, flags, 9701
+in r4
+in sp
+in r3
+out r1
+lsr r2, r3, 11814
+xor r2, r1, sp
+out r4
+out r1
+in flags
+lsr r2, zr, 48268
+out r5
+xor r2, r1, r4
+out flags
+in r2
+out r2
+out flags
+cmp zr, sp
+nand zr, r5, 10220
+in zr
+out r2
+in r4
+out sp
+lsr r3, flags, 15213
+out zr
+lsl r4, r3, 60110
+in r2
+out r3
+lsl r4, r3, flags
+cmp r1, r1
+nor flags, r1, r4
+xor r2, r5, zr
+add r4, r2, r4
+in sp
+out r1
+and zr, flags, 52942
+out r1
+in r4
+nand r5, r2, 64417
+and r2, r5, 7057
+nor r3, flags, 10552
+add sp, flags, 61000
+nor r4, r4, r3
+out r3
+out r1
+in sp
+out r5
+in r1
+in r3
+in r5
+out r3
+nand zr, sp, r3
+add r5, sp, zr
+and zr, r4, r5
+lsr r1, r3, r3
+and r1, r1, r4
+lsr r1, r5, 56212
+add r3, zr, r2
+in r5
+out r4
+lsl r3, r4, 50535
+cmp r1, r1
+out zr
+in sp
+xor sp, r4, 38478
+add r5, flags, 50915
+in r4
+lsl r5, r5, 28115
+out r5
+in zr
+in r1
+in r3
+and r2, r1, r5
+in sp
+in r1
+out flags
+out r4
+sub r4, zr, 4356
+or r5, zr, r3
+out r2
+and flags, r2, 15743
+cmp r2, 10913
+lsl r4, r2, 8724
+lsl flags, r3, 37418
+out r5
+nor flags, r3, r2
+cmp zr, r1
+cmp r3, 46803
+in r2
+in r1
+lsr r2, flags, 30605
+out r4
+or zr, r1, r3
+in r1
+xor r1, zr, r2
+cmp r2, 38827
+out r4
+or r1, r4, flags
+in zr
+lsl flags, r3, r5
+out zr
+out r5
+in r5
+add r4, r3, 19330
+in r4
+in r4
+lsl sp, zr, 25973
+in r2
+cmp r5, flags
+and zr, r1, flags
+in flags
+nand r3, zr, 56850
+in r3
+nor r2, r2, zr
+or r4, r5, 48821
+out r2
+in r3
+xor r3, r5, 58985
+nor r4, r4, r5
+lsr r4, r3, r3
+lsr r1, flags, r2
+out r5
+in flags
+out r1
+in flags
+or r5, r4, 51446
+or flags, zr, r3
+nor r1, sp, r5
+nor sp, r5, r1
+nand r1, r4, flags
+out zr
+out flags
+out flags
+and r3, zr, r4
+or flags, r3, 33541
+or r3, r2, sp
+in zr
+out r1
+in r5
+out r1
+lsl zr, r2, r5
+in r4
+out r4
+lsl r4, flags, r1
+in r5
+out flags
+lsl flags, zr, 45178
+and r4, r3, r5
+nor r4, r4, 24870
+out r5
+cmp r1, r4
+xor r4, zr, 15
+out flags
+lsr flags, sp, 59280
+or r1, r4, 47792
+in r2
+xor r2, r1, 62033
+sub flags, r1, r1
+lsr r3, r3, r3
+in r2
+sub r5, r5, 42552
+sub r5, r5, 14656
+or r4, r4, 7199
+nand r5, zr, 15560
+out r3
+sub r4, r3, r1
+cmp flags, sp
+out r3
+and r1, r5, zr
+lsr zr, flags, 11781
+nor r2, flags, r2
+cmp r5, 43466
+lsl r2, zr, 9875
+out r5
+in r4
+cmp r5, zr
+add zr, r2, 34469
+out r4
+nor flags, r2, r5
+or r1, flags, 60918
+in r2
+in flags
+in r4
+in flags
+lsr r3, r1, r3
+in r4
+out r4
+in r1
+in r4
+cmp flags, r4
+out r3
+in flags
+out r1
+nor r1, sp, r3
+out zr
+in r3
+out r5
+in r1
+or zr, flags, 775
+in r5
+out r5
+in r4
+or r2, r2, 4308
+and sp, r1, sp
+in flags
+nor r4, sp, 1104
+and sp, r3, r1
+and zr, r2, 26390
+out r2
+add sp, flags, 49968
+out r1
+nor r3, sp, 48605
+add r1, flags, 23708
+nand r4, zr, r5
+in sp
+out flags
+out r2
+in r2
+in flags
+out r3
+out flags
+sub zr, r3, r1
+in r5
+or zr, zr, r5
+and r4, r1, 13559
+out r3
+in r5
+nor r4, r1, r5
+lsl r5, r1, 63324
+in r1
+out sp
+out r3
+and sp, r5, 61907
+and r1, r3, r2
+cmp r3, 56117
+lsr r1, r1, r3
+lsr r4, sp, r2
+nand flags, r4, r3
+out zr
+nor r5, sp, flags
+cmp r2, r3
+cmp r3, zr
+out r2
+in r5
+add r4, r3, r3
+xor r5, r3, flags
+in r4
+add sp, flags, flags
+xor sp, r1, 5459
+in r4
+in flags
+nor r3, r5, r4
+in zr
+in flags
+out zr
+out r5
+sub r4, r1, r1
+in flags
+in r1
+in r5
+and r2, r2, 42128
+in r2
+sub r4, r5, r1
+lsl r5, flags, zr
+and r2, zr, 55242
+or r1, flags, r3
+cmp r5, r5
+in r4
+add zr, r4, 2806
+lsl r4, r1, r4
+add sp, zr, r4
+out r5
+add sp, r5, r5
+nand r1, r3, zr
+out r4
+out r3
+out sp
+in r3
+out r5
+in r3
+nor r1, sp, r3
+out r5
+in sp
+out zr
+in flags
+nor zr, r4, flags
+out flags
+sub r1, r2, r3
+out sp
+in r5
+out r5
+add zr, r2, 55519
+in sp
+out zr
+cmp r5, 37581
+cmp sp, 39141
+and r1, r5, r1
+or r2, r4, r4
+or r2, r3, zr
+in r4
+lsl r1, r1, 63493
+out r5
+out zr
+nand r2, zr, 19371
+out r1
+or r1, r5, 14086
+nand flags, r3, zr
+out r1
+sub zr, r1, r5
+out flags
+nand zr, r3, 35587
+sub zr, r4, 55705
+lsl zr, zr, 43267
+out sp
+add r3, r3, 49837
+cmp sp, 51841
+and r2, r1, zr
+out flags
+in zr
+out flags
+nand r5, flags, flags
+out r1
+in flags
+add zr, r3, sp
+out zr
+out r2
+lsl flags, flags, 31637
+nand sp, r1, flags
+lsl r4, r3, 94
+lsl r5, r2, 39147
+out r2
+lsl r4, sp, sp
+in r2
+in r2
+in sp
+in zr
+out r5
+in r3
+in zr
+add r2, flags, r3
+or r2, r4, 16891
+out r3
+lsr r1, r2, r2
+out sp
+add r5, zr, r3
+nor r2, r2, r4
+lsl r3, r2, r1
+sub sp, r1, flags
+or r4, r4, r5
+in r3
+out r3
+out r1
+out r3
+in r1
+out r2
+in r4
+nand zr, r4, 21687
+in r2
+in r4
+in r2
+in r3
+or r2, r3, 37702
+sub sp, r3, 23534
+in r3
+out zr
+lsr zr, r3, r2
+out r4
+lsl sp, zr, r5
+out zr
+out flags
+lsr r3, sp, 52508
+in r3
+add flags, r2, zr
+in sp
+out sp
+out r2
+in r5
+cmp r2, 7808
+in r4
+in zr
+in r3
+or r2, r4, sp
+out r1
+or r5, r4, r4
+or r2, r1, zr
+out r3
+out r1
+cmp r3, r5
+out r4
+in r3
+out r5
+add flags, r3, 13760
+in r3
+out sp
+and zr, r2, 38768
+in r3
+cmp zr, r3
+add r1, flags, 41281
+out r3
+in zr
+lsr zr, sp, r3
+lsl r4, r1, sp
+out r3
+out r5
+sub r2, flags, zr
+in zr
+out r5
+xor sp, r4, r2
+out r4
+out r2
+nand r3, r2, 58847
+out r5
+xor r3, flags, zr
+cmp sp, 56833
+in r5
+lsr flags, flags, 14488
+add r3, r4, r5
+nand r1, r1, 42610
+lsl r3, r2, 42851
+and r3, sp, 13795
+nor r4, zr, 55065
+out zr
+out r1
+in r4
+in zr
+in zr
+cmp r1, r4
+in zr
+out r5
+in r2
+add zr, sp, r4
+nor r3, zr, 40423
+out sp
+nand zr, sp, 21099
+out r5
+out r3
+lsl sp, r4, 22294
+in r3
+out r5
+sub flags, zr, r5
+and r2, flags, 14643
+out sp
+and r2, zr, zr
+nor sp, zr, r3
+out r2
+out r5
+in r5
+add r3, r3, r3
+out r5
+sub r4, r4, r3
+out r3
+nor zr, flags, sp
+out r3
+lsl r2, r2, r3
+and r3, r3, 15820
+and r4, flags, 18910
+out r4
+and zr, r5, r1
+lsr r4, r1, 8760
+out r1
+out r1
+out flags
+or r2, r2, 64260
+out r2
+in r2
+lsr zr, r1, sp
+nor zr, flags, 2555
+out sp
+in zr
+lsl r3, r1, r5
+lsl zr, r4, r1
+cmp zr, 45545
+sub zr, r2, 53700
+in r4
+out r4
+in r2
+add r5, flags, 46210
+or r1, r1, 46717
+and zr, r3, 35802
+in sp
+out zr
+cmp sp, sp
+lsr sp, zr, flags
+nand r3, r1, 62881
+in r5
+in zr
+in flags
+in r4
+lsl r1, r5, 41262
+out r3
+out flags
+xor r2, r5, r5
+out r1
+in sp
+out zr
+nand r1, r5, r4
+cmp r5, r5
+out r5
+xor r4, r3, r3
+out r4
+in r1
+cmp sp, sp
+out zr
+in sp
+out r1
+out r1
+out r4
+and r3, zr, 47030
+out sp
+add r5, sp, r5
+in sp
+in r2
+add sp, r5, zr
+out sp
+and r3, r5, r1
+in flags
+xor r5, r3, 62276
+in r4
+out sp
+lsl r3, r5, r1
+or r1, zr, 65237
+cmp r1, sp
+xor r4, r2, r5
+in zr
+out r2
+in r2
+in zr
+nand r1, r1, r3
+out r4
+or r4, flags, r3
+or flags, r5, 32733
+out r1
+in sp
+in sp
+in r4
+nor r5, r3, r3
+lsr r3, r2, r5
+or r4, sp, 20869
+cmp sp, 36391
+in r5
+lsl r2, r5, zr
+nand r1, r5, 37705
+in r1
+nand flags, zr, r5
+in r3
+out r1
+out r3
+out sp
+out r4
+in r2
+or r2, r1, flags
+in r1
+out r2
+xor r5, zr, sp
+in r1
+or r3, flags, r1
+add r3, r3, 58397
+lsl r4, r1, r5
+nand zr, r3, r1
+out r5
+lsl r2, zr, 9896
+out r4
+nand sp, r3, 41383
+sub r3, r3, 19274
+out r1
+xor r4, r1, r1
+nor r5, flags, r5
+xor r5, r3, zr
+out r3
+out flags
+sub r5, r4, 8127
+xor r5, r2, flags
+out r5
+in r2
+out sp
+out zr
+out zr
+sub sp, r4, 33178
+in r2
+nand r5, r1, 25394
+and r5, r4, 35901
+out flags
+out r4
+out flags
+cmp r5, r1
+in r2
+in r3
+lsl r2, zr, sp
+in r3
+cmp sp, sp
+nor r5, zr, 11646
+lsl r2, zr, 61095
+out sp
+in r2
+in r2
+nand r5, r2, r3
+add r2, sp, 38971
+or r3, r5, r3
+cmp r4, zr
+and sp, zr, zr
+and r3, r5, 28849
+in r2
+add r1, flags, r5
+lsl sp, r1, r4
+in sp
+lsr r1, r4, flags
+or flags, zr, r2
+nor zr, flags, 60764
+in r4
+lsr r4, sp, 14004
+out r3
+in flags
+in flags
+lsr r2, r5, zr
+cmp r4, r2
+out r3
+and r5, r1, 25892
+nor r3, r2, 41255
+cmp r1, r5
+sub r5, r3, flags
+out sp
+out flags
+in flags
+in sp
+in flags
+lsl r3, r4, flags
+xor r1, r4, 35814
+cmp r2, 49716
+xor r3, flags, 51604
+nand r4, zr, r5
+in r4
+add flags, r5, 46179
+nand r5, zr, r2
+in flags
+in r2
+out r1
+out flags
+in r4
+and r5, r5, r4
+lsr r5, r2, sp
+in r2
+out r2
+xor r4, r1, sp
+out zr
+cmp flags, 4647
+lsl r2, r2, r2
+in r5
+sub sp, flags, flags
+sub r5, r1, r1
+out r2
+in r4
+or r2, sp, r1
+lsl r4, r3, zr
+nor sp, r3, flags
+and r1, r1, 21461
+out r2
+lsr zr, flags, 17263
+out sp
+out r4
+in zr
+in r3
+in r5
+and sp, r4, r2
+in r4
+sub r2, r4, 53390
+in r1
+add zr, r3, r2
+in zr
+sub r5, r3, r1
+cmp r5, sp
+out r2
+out r1
+sub r1, flags, 20505
+in zr
+add sp, r3, r2
+cmp r2, r1
+and flags, r1, 10217
+and r5, sp, r4
+lsl r5, r2, flags
+lsl r3, zr, r4
+cmp sp, zr
+in zr
+xor r5, r1, 42549
+`

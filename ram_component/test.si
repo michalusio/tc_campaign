@@ -1,0 +1,99 @@
+
+var memory_state      = [0,0,0,0]
+var next_memory_state = [0,0,0,0]
+
+def on_reset($scratch_space: [Int], test: Int) {
+
+    .memory_state[0] = 0
+    .memory_state[1] = 0
+    .memory_state[2] = 0
+    .memory_state[3] = 0
+    .next_memory_state[0] = 0
+    .next_memory_state[1] = 0
+    .next_memory_state[2] = 0
+    .next_memory_state[3] = 0
+
+}
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    .memory_state[0] = .next_memory_state[0] // TODO, actual array copying
+    .memory_state[1] = .next_memory_state[1]
+    .memory_state[2] = .next_memory_state[2]
+    .memory_state[3] = .next_memory_state[3]
+
+    var add_1 = random(2)
+    var add_2 = random(2)
+    var actions = random(4)
+    var load = actions & 1
+    var save = actions >> 1
+    var value = 1 + random(255)
+    
+    if tick < 8 {
+        if tick % 2 == 0 {
+            save = 1
+            load = 0
+            add_1 = (tick / 2) & 1
+            add_2 = <Int> ((tick / 2) > 1)
+          
+        } else {
+            save = 0
+            load = 1
+            add_1 = (tick / 2) & 1
+            add_2 = <Int> ((tick / 2) > 1)
+        }
+    }
+    
+    if save == 1 {
+        let offset = add_1 * 2 + add_2
+        .next_memory_state[offset] = value
+        inputs[5 + offset] = value // For level visuals
+    }
+
+    inputs[0] = load
+    inputs[1] = save
+    inputs[2] = add_1
+    inputs[3] = add_2
+    inputs[4] = value
+
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    let output_enabled = <Int> (<U64> (outputs[1] > 0))
+
+    if inputs[0] != output_enabled {
+
+        if inputs[0] == 0 {
+
+            set_error("Output should not be enabled.")
+
+        } else {
+
+            set_error("Output should be enabled.")
+
+        }
+
+        return fail
+    }
+    
+    if inputs[0] == 1 {
+
+        var address = inputs[2] * 2 + inputs[3]
+
+        if .memory_state[address] != outputs[0] {
+
+            set_error(`Output was {outputs[0]}, but it should have been {.memory_state[address]}.`)
+            return fail
+
+        }
+
+    }
+
+    if tick == 127 {
+
+        return win
+
+    }
+
+}

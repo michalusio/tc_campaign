@@ -1,0 +1,143 @@
+const INPUT  = <U8> 0b110_000
+const OUTPUT = <U8> 0b000_110
+
+const IMM    = <U8> 0b0000_0000
+const CALC   = <U8> 0b0100_0000
+const MOVE   = <U8> 0b1000_0000
+const COND   = <U8> 0b1100_0000
+
+const NAND = <U8> 0
+const OR   = <U8> 1
+const AND  = <U8> 2
+const NOR  = <U8> 3
+const ADD  = <U8> 4
+const SUB  = <U8> 5
+
+var registers    = [0,0,0,0,0,0]
+
+def on_reset($scratch_space: [Int], test: Int) {
+    var h = 0
+    while h < 6 {
+        .registers[h] = 0
+        h += 1
+    }
+
+    var s = <U8> 0
+    var d = <U8> 0
+    front_panel_push(MOVE | INPUT | OUTPUT)
+    front_panel_push(MOVE | INPUT | 0)
+    front_panel_push(MOVE | INPUT | 1)
+    front_panel_push(MOVE | INPUT | 2)
+    front_panel_push(MOVE | INPUT | 3)
+    front_panel_push(MOVE | INPUT | 4)
+    front_panel_push(MOVE | INPUT | 5)
+  
+    while s <= 6 {
+        d = 0
+        front_panel_push(MOVE | INPUT | s)
+        while d <= 6 {
+            front_panel_push(MOVE | (s << 3) | d)
+            d += 1
+        }
+        s += 1
+    }
+}
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+    inputs[0] = random(256)
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    if !has_counter_component() {
+        set_error("Add a counter component.")
+        return fail
+    }
+
+    if !has_front_panel() {
+        set_error("Add a front panel component.")
+        return fail
+    }
+
+    if get_counter_value() != tick + 1 {
+        set_error(`Counter should have value {tick + 1}.`)
+        return fail
+    }
+
+    let instruction = get_program_output() & 0xff
+
+    let opcode = <U8> (instruction >> 6)
+
+
+    switch opcode << 6
+        IMM {
+            .registers[0] = instruction & 0b111111
+        }
+        CALC {
+            let alu_code = instruction & 0b111
+            let r1 = .registers[1]
+            let r2 = .registers[2]
+
+            switch <U8> alu_code
+                OR {
+                    .registers[3] = r1 | r2
+                }
+                NAND {
+                    .registers[3] = ~(r1 & r2) & 0xff
+                }
+                NOR {
+                    .registers[3] = ~(r1 | r2) & 0xff
+                }
+                AND {
+                    .registers[3] = r1 & r2
+                }
+                ADD {
+                    .registers[3] = (r1 + r2) & 0xff
+                }
+                SUB {
+                    .registers[3] = (r1 - r2) & 0xff
+                }
+
+        }
+        MOVE {
+
+            let from = (instruction >> 3) & 0b111
+            let to   = instruction & 0b111
+
+            var value = 0
+            if from <= 5 {
+                value = .registers[from]
+            } elif from == 6 {
+                value = inputs[0]
+            }
+
+            if to <= 5 {
+                .registers[to] = value
+            } elif to == 6 {
+                if (outputs[2] & 1) != 1 {
+                    set_error("Output not enabled.")
+                    return fail    
+                }
+                if outputs[1] != value {
+                    set_error(`Expected output: {value}.`)
+                    return fail
+                }    
+            }
+        }
+
+    var reg_i = 0
+    while reg_i < 6 {
+        let value = get_level_memory(`reg {reg_i}`)
+        if value != Z_STATE && .registers[reg_i] != value {
+            set_error(`Register {reg_i} should have value {.registers[reg_i]}.`)
+            return fail
+        }
+
+        reg_i += 1
+    }
+
+
+    if tick == .program_length - 1 {
+        return win
+    }
+}

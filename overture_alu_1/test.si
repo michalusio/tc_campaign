@@ -1,0 +1,51 @@
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var code = random(4)
+    var num1 = random(255)
+    var num2 = random(255)
+    inputs[0] = code
+    inputs[1] = num1
+    inputs[2] = num2
+
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    var result = 0
+
+    switch inputs[0]
+        0 { 
+
+            set_custom_input_text("NAND")
+            result =   ~(inputs[1] & inputs[2])
+
+        }
+        1 { 
+
+            set_custom_input_text("OR")
+            result = inputs[1] | inputs[2]
+
+        }
+        2 { 
+
+            set_custom_input_text("AND")
+            result = inputs[1] & inputs[2]
+
+        } 
+        3 { 
+
+            set_custom_input_text("NOR")
+            result =  ~(inputs[1] | inputs[2])
+
+        } 
+
+    result &= 0xff
+    if outputs[0] != result {
+        return fail
+    }
+    if tick == 0xffff {
+        return win
+    }
+
+}

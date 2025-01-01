@@ -1,0 +1,11 @@
+kind = sequential
+title = "Bit Inverter"
+size = [-30, -30, 30, 30]
+input_labels = [["0","1","Value"],["No","Yes","Invert"]]
+tick_past_fail = 4
+output_history_pins = 1
+background = 2
+dialogue = [
+  (alien_centered, "We are experimenting with how backgrounds influence cognitive functions in earthlings."),
+  (info, `When "Invert" is [ON], output the opposite of "Value". Otherwise, just output "Value" as is.`),
+]

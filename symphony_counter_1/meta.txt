@@ -1,0 +1,13 @@
+kind = sequential
+title = "Symphony counter"
+size = [-48, -48, 49, 49]
+background = 6
+copy_solution_to_level = ["symphony_counter_2"]
+save_solution_as_custom = "Symphony/count"
+input_labels = [["STORE"], ["STORE VALUE"]]
+output_labels = ["OUTPUT"]
+add_components = [com_probe_memory_word: -1]
+dialogue = [
+    (info, `Build a 16 bit counter that increments by 4 by default, but can alternatively be overwritten with a specific value.`),
+    (info, `Like in the register level, connect a memory probe to the counter value.`),
+]

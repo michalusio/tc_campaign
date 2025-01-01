@@ -1,0 +1,2 @@
+[image id="pointer" y=8 file="pointer.png"]
+[text id="text" text="" size=22 y=120 font=mono]

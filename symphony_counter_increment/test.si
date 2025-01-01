@@ -1,0 +1,41 @@
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    inputs[0] = random(2)
+    inputs[1] = random(2) & inputs[0]
+    inputs[2] = random(0xfff) << 2
+
+    if tick == 0 {
+
+        inputs[2] = 4
+
+    }
+
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    let correct_output = inputs[2] + inputs[1] * 4 + inputs[0] * 4
+
+    if outputs[0] != correct_output {
+
+        set_error(`Output should be {correct_output} {inputs[2]} + {inputs[1]} * 4 + {inputs[0]} .`)
+        return fail
+
+    }
+
+
+    if tick == 0xffff {
+
+        if get_delay_score() >= 60 {
+
+            set_error(`Your solution is correct, but delay should be less than 60.`)
+            return fail
+
+        }
+    
+        return win
+    
+    }
+
+}

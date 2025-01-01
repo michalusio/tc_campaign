@@ -1,0 +1,13 @@
+kind = sequential
+title = "Counter increment"
+size = [-48, -48, 49, 49]
+background = 6
+save_solution_as_custom = "Symphony/Allegro/cnt_inc"
+input_labels = [["Execute A"], ["Execute B"], ["Counter value"]]
+output_labels = ["Increment"]
+add_components = [com_probe_memory_word: -1]
+dialogue = [
+    (alien, `When we execute two instructions, our counter needs to increment by 8. However, if we are not executing the second instruction, we should only increment by 4. And finally, in certain situations neither instruction execute and we shouldn't increment at all.
+
+Build a circuit that can take an address and increment an appropriate amount based on how many instructions execute.`)
+]

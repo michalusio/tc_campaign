@@ -1,0 +1,15 @@
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+    var x = tick
+    x ^= x << 1
+    x ^= x >> 1
+    x ^= x << 2
+    inputs[0] = x & 0xff
+}
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+    if inputs[0] != (~outputs[0]) & 0xff {
+        return fail
+    }
+    if tick == 0xff { 
+        return win
+    }
+}

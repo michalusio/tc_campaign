@@ -1,0 +1,24 @@
+
+const CORRECT_OUTPUT = [1,0]
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    inputs[0] = tick
+
+}
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    if CORRECT_OUTPUT[tick] != outputs[0] {
+
+        return fail
+
+    }
+
+    if tick == CORRECT_OUTPUT.len() - 1 {
+
+        return win
+
+    }
+
+}
+

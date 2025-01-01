@@ -1,0 +1,20 @@
+kind = sequential
+title = "Structural Hazard"
+size = [-48, -48, 49, 49]
+background = 6
+input_labels = [["Instruction"], ["RAM ready"]]
+output_labels = ["Execute"]
+save_solution_as_custom = "Symphony/Allegro/hazard/haz_struct"
+dialogue = [
+  (alien, `It is time to remove the Fast RAM component from your circuit, its gate score is just too high.
+
+We will replace it with a Latency RAM, this ram is cheap in terms of both gates and delay, but it takes multiple ticks to complete.`),
+  (alien, `Just as with the data hazard level, the goal of this level is to test if we can safely execute instructions. 
+
+If the input instruction is a RAM instruction, we consider the RAM busy until we see the RAM ready signal.
+
+While RAM is busy with a store, we can only execute ALU and IO instructions.
+While RAM is busy with a load, we cannot execute anything. 
+
+We don't execute anything while waiting for load to keep the architecture less complicated for now. Load instructions overwrite a register, so we would have to check that we didn't use thar register before it was loaded. Also, the result of a load needs a register store, so we would need to make sure one of the pipelines were free.`),
+]
