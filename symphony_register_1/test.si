@@ -6,15 +6,15 @@ def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
 
     scratch_space[MEMORY] = scratch_space[NEXT_MEMORY]
 
-    let store = random(2)
+    let store = random(16)
     let value = random(0xffff + 1)
 
     if store == 1 {
         scratch_space[NEXT_MEMORY] = value
     }
 
-    inputs[0] = random(2)
-    inputs[1] = random(2)
+    inputs[0] = random(16)
+    inputs[1] = random(16)
     inputs[2] = store
     inputs[3] = value
 
@@ -71,7 +71,7 @@ def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]
 
     }
 
-    if tick == 0xffff {
+    if tick == 0x1ffff {
 
         return win
 
