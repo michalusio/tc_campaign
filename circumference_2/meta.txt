@@ -15,7 +15,19 @@ Example in infix (standard) notation:
 The same formula in RPN:
 3 4 5 * +"),
   (info, "When you encounter an operation, you take the 2 last operands you've encountered, calculate the result and store it instead of the operands and the operation"),
-  (alien_centered, "Your computer will receive an ASCII text describing a formula in Reverse Polish Notation, and should return the result of evaluating that formula."),
+  (alien, "Your computer will receive an ASCII text describing a formula in Reverse Polish Notation, and should return the result of evaluating that formula. Here is a list of the operations we support:
+
+[code]
+add +
+sub -
+or  |
+and &
+xor ^
+lsl <<
+lsr >>
+[/code]
+
+  "),
 ]
 default_isa_spec = `
 
