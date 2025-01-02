@@ -18,7 +18,7 @@
 [text id="a23" text="0.0000" size=20 x=-100 y=110]
 [text id="a33" text="0.0000" size=20 x=-100 y=130]
 
-[text id="t" text="T" size=20 x=0 y=150]
+[text id="t" text="T" size=20 x=-50 y=50]
 
 [text id="eq" text="=" size=20 x=0 y=100]
 

@@ -3,21 +3,23 @@ title = "Table Flipping"
 size = [-64, -64, 63, 63]
 background = 5
 save_solution_as_custom = "Hoodoo/Matrix/Transpose"
-input_labels = [["A COLUMN 0"],["A COLUMN 1"],["A COLUMN 2"],["A COLUMN 3"],["B COLUMN 0"],["B COLUMN 1"],["B COLUMN 2"],["B COLUMN 3"]]
+input_labels = [["COLUMN 0"],["COLUMN 1"],["COLUMN 2"],["COLUMN 3"]]
 output_labels = ["COLUMN 0", "COLUMN 1", "COLUMN 2", "COLUMN 3"]
 dialogue = [
   (alien_centered, "An operation that doesn't exist for numbers or vectors, but exists for matrices is Transposition."),
-  (info, "Transposition works by flipping the matrix around it's main diagonal, like that:
-m[sub]00[/sub] m[sub]10[/sub] m[sub]20[/sub] m[sub]30[/sub]
-m[sub]01[/sub] m[sub]11[/sub] m[sub]21[/sub] m[sub]31[/sub]
-m[sub]02[/sub] m[sub]12[/sub] m[sub]22[/sub] m[sub]32[/sub]
-m[sub]03[/sub] m[sub]13[/sub] m[sub]23[/sub] m[sub]33[/sub]
-       V
-m[sub]00[/sub] m[sub]01[/sub] m[sub]02[/sub] m[sub]03[/sub]
-m[sub]10[/sub] m[sub]11[/sub] m[sub]12[/sub] m[sub]13[/sub]
-m[sub]20[/sub] m[sub]21[/sub] m[sub]22[/sub] m[sub]23[/sub]
-m[sub]30[/sub] m[sub]31[/sub] m[sub]32[/sub] m[sub]33[/sub]
+  (info, "Transposition works by flipping the matrix around it's main diagonal, like that:[center][table=4]
+[cell]m_00[/cell] [cell]m_10[/cell] [cell]m_20[/cell] [cell]m_30[/cell]
+[cell]m_01[/cell] [cell]m_11[/cell] [cell]m_21[/cell] [cell]m_31[/cell]
+[cell]m_02[/cell] [cell]m_12[/cell] [cell]m_22[/cell] [cell]m_32[/cell]
+[cell]m_03[/cell] [cell]m_13[/cell] [cell]m_23[/cell] [cell]m_33[/cell]
+[/table][/center][center]V[/center][center][table=4]
+[cell]m_00[/cell] [cell]m_01[/cell] [cell]m_02[/cell] [cell]m_03[/cell]
+[cell]m_10[/cell] [cell]m_11[/cell] [cell]m_12[/cell] [cell]m_13[/cell]
+[cell]m_20[/cell] [cell]m_21[/cell] [cell]m_22[/cell] [cell]m_23[/cell]
+[cell]m_30[/cell] [cell]m_31[/cell] [cell]m_32[/cell] [cell]m_33[/cell]
+[/table][/center]
 "),
-  (alien_centered, "In other words - m[sub]xy[/sub] is swapped with m[sub]yx[/sub]."),
+  (alien_centered, "In other words:
+m_xy is swapped with m_yx."),
   (info, "Transpose a matrix."),
 ]
