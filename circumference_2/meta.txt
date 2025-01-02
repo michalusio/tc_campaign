@@ -1,6 +1,6 @@
 kind = architecture
 title = "Calibrating Laser Cannons 2"
-tests = 71
+tests = 200
 size = [-256, -256, 255, 255]
 dialogue = [
   (alien_centered, "Remember our ship's laser cannons for shooting at asteroids?

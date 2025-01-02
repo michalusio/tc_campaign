@@ -78,12 +78,186 @@ const FORMULAS = [
     ["593 31779 >> -26244 -662 - &", "0"]
 ]
 
+const MAX_VALUES_IN_FORMULA = 16
+// const MAX_UNARY_OPS_IN_FORMULA = 4
+const MAX_UNARY_OPS_IN_FORMULA = 0  // simple way to disable unary ops
+
+const OP_NOT    = 0
+const UNARY_OPS = OP_NOT + 1
+
+const OP_ADD        = 0
+const OP_SUB        = OP_ADD + 1
+const OP_OR         = OP_SUB + 1
+const OP_AND        = OP_OR  + 1
+const OP_XOR        = OP_AND + 1
+const NON_SHIFT_OPS = OP_XOR + 1
+
+const OP_LSL        = OP_XOR + 1
+const OP_LSR        = OP_LSL + 1
+const BINARY_OPS    = OP_LSR + 1
+
+// The higher the order, the more likely lower results are and the less likely higher results.
+// The shape of the distribution should roughly be [ x ** order ] and order == 1 means uniform.
+// Here upper_bound is inclusive (as opposed to random() where it's exclusive).
+
+def curve_rand(upper_bound: Int, order: Int) Int {
+
+    var result = upper_bound
+    var iteration = 0
+
+    while result > 0 && iteration < order {
+
+        result = random(1 + result)
+        iteration += 1
+
+    }
+
+    return result
+
+}
+
+def make_formula($scratch_space: [Int], answer_idx: Int) String {
+
+    let min_values    = 1 + random(min(3, MAX_VALUES_IN_FORMULA))
+    let num_values    = curve_rand(MAX_VALUES_IN_FORMULA - min_values, 3) + min_values
+    let num_unary_ops = curve_rand(MAX_UNARY_OPS_IN_FORMULA, 3)
+
+    // we can use the same space, as the text will be longer and will subsequently overwrite it
+    var stack_pointer = TEXT
+    var top_of_stack = curve_rand(0xffff, 5)
+    var formula = `{top_of_stack}`
+
+    var value_count = 1  // we already generated an initial value above
+    var unary_op_count = 0
+    var binary_op_count = 0
+
+    var max_add_values = num_values - value_count
+    var max_add_unary_ops = num_unary_ops - unary_op_count
+    var max_add_binary_ops = value_count - 1 - binary_op_count
+    var num_possibilites = max_add_values + max_add_unary_ops + max_add_binary_ops
+
+    while num_possibilites > 0 {
+
+        let what = random(num_possibilites)
+
+        if what < max_add_values {
+
+            scratch_space[stack_pointer] = top_of_stack
+            stack_pointer += 1
+
+            top_of_stack = curve_rand(0xffff, 5)
+            formula += ` {top_of_stack}`
+            value_count += 1
+
+        } elif what - max_add_values < max_add_unary_ops {
+
+            let op_idx = random(UNARY_OPS)
+
+            switch op_idx
+
+                OP_NOT {
+
+                    top_of_stack = ~top_of_stack
+                    formula += " ~"
+
+                }
+
+            top_of_stack &= 0xffff
+            unary_op_count += 1
+
+        } else {
+
+            stack_pointer -= 1
+            let a = scratch_space[stack_pointer]
+            let b = top_of_stack
+
+            let op_idx = random(b <= 16 ? BINARY_OPS : NON_SHIFT_OPS)
+
+            switch op_idx
+
+                OP_ADD {
+
+                    top_of_stack = a + b
+                    formula += " +"
+
+                }
+
+                OP_SUB {
+
+                    top_of_stack = a - b
+                    formula += " -"
+
+                }
+
+                OP_OR {
+
+                    top_of_stack = a | b
+                    formula += " |"
+
+                }
+
+                OP_AND {
+
+                    top_of_stack = a & b
+                    formula += " &"
+
+                }
+
+                OP_XOR {
+
+                    top_of_stack = a ^ b
+                    formula += " ^"
+
+                }
+
+                OP_LSL {
+
+                    top_of_stack = a << (b & 0x3f)
+                    formula += " <<"
+
+                }
+
+                OP_LSR {
+
+                    top_of_stack = a >> (b & 0x3f)
+                    formula += " >>"
+
+                }
+
+            top_of_stack &= 0xffff
+            binary_op_count += 1
+
+        }
+
+        max_add_values = num_values - value_count
+        max_add_unary_ops = num_unary_ops - unary_op_count
+        max_add_binary_ops = value_count - 1 - binary_op_count
+        num_possibilites = max_add_values + max_add_unary_ops + max_add_binary_ops
+
+    }
+
+    scratch_space[answer_idx] = top_of_stack
+
+    return formula
+
+}
+
 def on_reset($scratch_space: [Int], test: Int) {
 
-    let formula = FORMULAS[test]
+    var text = ""
 
-    let text = formula[0]
-    scratch_space[ANSWER] = int(formula[1])
+    if test < FORMULAS.len() {
+
+        let formula = FORMULAS[test]
+
+        text = formula[0]
+        scratch_space[ANSWER] = int(formula[1])
+
+    } else {
+
+        text = make_formula($scratch_space, ANSWER)
+
+    }
 
     let len = text.len()
     scratch_space[TEXT_LEN] = len
