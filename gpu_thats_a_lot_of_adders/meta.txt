@@ -1,0 +1,12 @@
+kind = combinational
+title = "That's a Lot of Adders"
+size = [-64, -64, 63, 63]
+background = 5
+save_solution_as_custom = "Hoodoo/Matrix/Add"
+input_labels = [["A COLUMN 0"],["A COLUMN 1"],["A COLUMN 2"],["A COLUMN 3"],["B COLUMN 0"],["B COLUMN 1"],["B COLUMN 2"],["B COLUMN 3"]]
+output_labels = ["COLUMN 0", "COLUMN 1", "COLUMN 2", "COLUMN 3"]
+dialogue = [
+  (alien_centered, "One of the operations we should be able to do on matrices is of course good old addition."),
+  (alien_centered, "Addition works just like for vectors - unpack into components, add them together, pack the components back."),
+  (info, "Add two matrices in column-major order."),
+]

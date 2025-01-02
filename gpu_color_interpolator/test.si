@@ -1,0 +1,185 @@
+
+def hex_digit(value: U24) String {
+    switch value
+        0x0 {
+            return `0`
+        }
+        0x1 {
+            return `1`
+        }
+        0x2 {
+            return `2`
+        }
+        0x3 {
+            return `3`
+        }
+        0x4 {
+            return `4`
+        }
+        0x5 {
+            return `5`
+        }
+        0x6 {
+            return `6`
+        }
+        0x7 {
+            return `7`
+        }
+        0x8 {
+            return `8`
+        }
+        0x9 {
+            return `9`
+        }
+        0xa {
+            return `A`
+        }
+        0xb {
+            return `B`
+        }
+        0xc {
+            return `C`
+        }
+        0xd {
+            return `D`
+        }
+        0xe {
+            return `E`
+        }
+        0xf {
+            return `F`
+        }
+}
+
+def hex(value: U24) String {
+    return `#{hex_digit((value >> 4) & 0xf)}{hex_digit(value & 0xf)}{hex_digit((value >> 12) & 0xf)}{hex_digit((value >> 8) & 0xf)}{hex_digit((value >> 20) & 0xf)}{hex_digit((value >> 16) & 0xf)}`
+}
+
+def fixed_to_str(a: U16) String {
+    var result = <Int>((a & 0x7ff0) >> 4)
+    result *= 10000
+    result += ((<Int>a) & 0xf) * 625
+
+    if (a >> 15) > 0 {
+        result -= 20480000
+    }
+
+    var fraction = result % 10000
+    if fraction < 0 {
+        fraction = -fraction
+    }
+
+    return `{result / 10000}.{(fraction / 1000) % 10}{(fraction / 100) % 10}{(fraction / 10) % 10}{(fraction) % 10}`
+}
+
+def get_expected(inputs: [Int]) U24 {
+    var w0 = <Int>(<U16>inputs[0])
+    var c0 = <U24>inputs[1]
+    var w1 = <Int>(<U16>inputs[2])
+    var c1 = <U24>inputs[3]
+    var w2 = <Int>(<U16>inputs[4])
+    var c2 = <U24>inputs[5]
+
+    var r0 = <Int> (c0 & 0xff)
+    var g0 = <Int> ((c0 >> 8) & 0xff)
+    var b0 = <Int> ((c0 >> 16) & 0xff)
+
+    var r1 = <Int> (c1 & 0xff)
+    var g1 = <Int> ((c1 >> 8) & 0xff)
+    var b1 = <Int> ((c1 >> 16) & 0xff)
+
+    var r2 = <Int> (c2 & 0xff)
+    var g2 = <Int> ((c2 >> 8) & 0xff)
+    var b2 = <Int> ((c2 >> 16) & 0xff)
+
+    var r = <U24> ((w0 * r0 + w1 * r1 + w2 * r2) >> 4)
+    var g = <U24> ((w0 * g0 + w1 * g1 + w2 * g2) >> 4)
+    var b = <U24> ((w0 * b0 + w1 * b1 + w2 * b2) >> 4)
+
+    return r | (g << 8) | (b << 16)
+}
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var x = tick + 13
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+
+    var a0 = x & 0x7
+    var a1 = (x >> 3) & 0x7
+    var a2 = 0x10 - a0 - a1
+
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+
+    inputs[0] = <U16>a0
+    inputs[1] = x & 0xffffff
+
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+
+    inputs[2] = <U16>a1
+    inputs[3] = x & 0xffffff
+
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+
+    inputs[4] = <U16>a2
+    inputs[5] = x & 0xffffff
+
+    if tick <= 15 {
+        let expected = get_expected(inputs)
+
+        ui_set_text("w0", fixed_to_str(<U16>inputs[0]))
+        ui_set_text("w1", fixed_to_str(<U16>inputs[2]))
+        ui_set_text("w2", fixed_to_str(<U16>inputs[4]))
+
+        ui_set_text("c0", hex(<U24>inputs[1]))
+        ui_set_text("c1", hex(<U24>inputs[3]))
+        ui_set_text("c2", hex(<U24>inputs[5]))
+
+        ui_set_text("result", hex(expected))
+    }
+    if tick == 16 {
+        ui_set_text("w0", ``)
+        ui_set_text("w1", ``)
+        ui_set_text("w2", ``)
+
+        ui_set_text("c0", ``)
+        ui_set_text("c1", ``)
+        ui_set_text("c2", ``)
+
+        ui_set_text("result", ``)
+    }
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+    
+    let expected = get_expected(inputs)
+    let provided = <U24> outputs[0]
+
+    if provided == expected {
+        if tick == 0xffff {
+            return win
+        }
+    } else {
+        set_error(`Expected {hex(expected)}, but got {hex(provided)}`)
+        return fail
+    }
+}

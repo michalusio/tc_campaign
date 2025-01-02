@@ -1,0 +1,191 @@
+
+def fixed_to_str(a: U16) String {
+    var result = <Int>((a & 0x7ff0) >> 4)
+    result *= 10000
+    result += ((<Int>a) & 0xf) * 625
+
+    if (a >> 15) > 0 {
+        result -= 20480000
+    }
+
+    var fraction = result % 10000
+    if fraction < 0 {
+        fraction = -fraction
+    }
+
+    return `{result / 10000}.{(fraction / 1000) % 10}{(fraction / 100) % 10}{(fraction / 10) % 10}{(fraction) % 10}`
+}
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var t = tick
+    t ^= t << 7
+    t ^= t >> 9
+    t ^= t << 8
+    t ^= t << 31
+    t ^= t >> 33
+    t ^= t << 32
+    t ^= t << 15
+    t ^= t >> 17
+    t ^= t << 16
+    t ^= t << 63
+    t ^= t >> 65
+    t ^= t << 64
+
+    var tt = tick * 797
+    tt ^= tt << 7
+    tt ^= tt >> 9
+    tt ^= tt << 8
+    tt ^= tt << 31
+    tt ^= tt >> 33
+    tt ^= tt << 32
+    tt ^= tt << 15
+    tt ^= tt >> 17
+    tt ^= tt << 16
+    tt ^= tt << 63
+    tt ^= tt >> 65
+    tt ^= tt << 64
+    inputs[0] = t & 0xffffffffffffffff
+    inputs[1] = tt & 0xffffffffffffffff
+
+    if tick <= 15 {
+        var ax = <Int> (<S16> (inputs[0]))
+        var ay = <Int> (<S16> (inputs[0] >> 16))
+        var az = <Int> (<S16> (inputs[0] >> 32))
+        var aw = <Int> (<S16> (inputs[0] >> 48))
+
+        var bx = <Int> (<S16> (inputs[1]))
+        var by = <Int> (<S16> (inputs[1] >> 16))
+        var bz = <Int> (<S16> (inputs[1] >> 32))
+        var bw = <Int> (<S16> (inputs[1] >> 48))
+
+        ui_set_text("x0", fixed_to_str(<U16>ax))
+        ui_set_text("y0", fixed_to_str(<U16>ay))
+        ui_set_text("z0", fixed_to_str(<U16>az))
+        ui_set_text("w0", fixed_to_str(<U16>aw))
+
+        ui_set_text("x1", fixed_to_str(<U16>bx))
+        ui_set_text("y1", fixed_to_str(<U16>by))
+        ui_set_text("z1", fixed_to_str(<U16>bz))
+        ui_set_text("w1", fixed_to_str(<U16>bw))
+
+        var x = ax + bx
+        var y = ay + by
+        var z = az + bz
+        var w = aw + bw
+
+        if x > 32767 {
+            x = 32767
+        }
+        if x < -32768 {
+            x = -32768
+        }
+
+        if y > 32767 {
+            y = 32767
+        }
+        if y < -32768 {
+            y = -32768
+        }
+
+        if z > 32767 {
+            z = 32767
+        }
+        if z < -32768 {
+            z = -32768
+        }
+
+        if w > 32767 {
+            w = 32767
+        }
+        if w < -32768 {
+            w = -32768
+        }
+
+        ui_set_text("x2", fixed_to_str(<U16> x))
+        ui_set_text("y2", fixed_to_str(<U16> y))
+        ui_set_text("z2", fixed_to_str(<U16> z))
+        ui_set_text("w2", fixed_to_str(<U16> w))
+    }
+    if tick == 16 {
+        ui_set_text("x0", ``)
+        ui_set_text("y0", ``)
+        ui_set_text("z0", ``)
+        ui_set_text("w0", ``)
+
+        ui_set_text("x1", ``)
+        ui_set_text("y1", ``)
+        ui_set_text("z1", ``)
+        ui_set_text("w1", ``)
+
+        ui_set_text("x2", ``)
+        ui_set_text("y2", ``)
+        ui_set_text("z2", ``)
+        ui_set_text("w2", ``)
+    }
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+
+    var ax = <Int> (<S16> (inputs[0] & 0xffff))
+    var ay = <Int> (<S16> ((inputs[0] >> 16) & 0xffff))
+    var az = <Int> (<S16> ((inputs[0] >> 32) & 0xffff))
+    var aw = <Int> (<S16> ((inputs[0] >> 48) & 0xffff))
+
+    var bx = <Int> (<S16> (inputs[1] & 0xffff))
+    var by = <Int> (<S16> ((inputs[1] >> 16) & 0xffff))
+    var bz = <Int> (<S16> ((inputs[1] >> 32) & 0xffff))
+    var bw = <Int> (<S16> ((inputs[1] >> 48) & 0xffff))
+
+    var x = ax + bx
+    var y = ay + by
+    var z = az + bz
+    var w = aw + bw
+
+    if x > 32767 {
+        x = 32767
+    }
+    if x < -32768 {
+        x = -32768
+    }
+
+    if y > 32767 {
+        y = 32767
+    }
+    if y < -32768 {
+        y = -32768
+    }
+
+    if z > 32767 {
+        z = 32767
+    }
+    if z < -32768 {
+        z = -32768
+    }
+
+    if w > 32767 {
+        w = 32767
+    }
+    if w < -32768 {
+        w = -32768
+    }
+
+    var vx = <U64> (<U16> x)
+    var vy = <U64> (<U16> y)
+    var vz = <U64> (<U16> z)
+    var vw = <U64> (<U16> w)
+
+    var vector = vx | (vy << 16) | (vz << 32) | (vw << 48)
+
+    var expected = <U64> vector
+    var provided = <U64> outputs[0]
+
+    if provided == expected {
+        if tick == 0xffff {
+            return win
+        }
+    } else {
+        set_error(`Expected {expected}, but got {provided}`)
+        return fail
+    }
+}

@@ -1,0 +1,72 @@
+
+def fixed_to_str(a: U16) String {
+    var result = <Int>((a & 0x7ff0) >> 4)
+    result *= 10000
+    result += ((<Int>a) & 0xf) * 625
+
+    if (a >> 15) > 0 {
+        result -= 20480000
+    }
+
+    var fraction = result % 10000
+    if fraction < 0 {
+        fraction = -fraction
+    }
+
+    return `{result / 10000}.{(fraction / 1000) % 10}{(fraction / 100) % 10}{(fraction / 10) % 10}{(fraction) % 10}`
+}
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var x = tick
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+    x ^= x << 31
+    x ^= x >> 33
+    x ^= x << 32
+    x ^= x << 63
+    x ^= x >> 65
+    x ^= x << 64
+    inputs[0] = x & 0xffff
+    inputs[1] = (x >> 16) & 0xffff
+    inputs[2] = (x >> 32) & 0xffff
+    inputs[3] = (x >> 48) & 0xffff
+
+    if tick <= 15 {
+        ui_set_text("x", fixed_to_str(<U16> inputs[0]))
+        ui_set_text("y", fixed_to_str(<U16> inputs[1]))
+        ui_set_text("z", fixed_to_str(<U16> inputs[2]))
+        ui_set_text("w", fixed_to_str(<U16> inputs[3]))
+    }
+    if tick == 16 {
+        ui_set_text("x", ``)
+        ui_set_text("y", ``)
+        ui_set_text("z", ``)
+        ui_set_text("w", ``)
+    }
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+    
+    var x = <U64> (<U16> (inputs[0]))
+    var y = <U64> (<U16> (inputs[1]))
+    var z = <U64> (<U16> (inputs[2]))
+    var w = <U64> (<U16> (inputs[3]))
+    var vector = x | (y << 16) | (z << 32) | (w << 48)
+
+    var expected = vector
+    var provided = <U64> outputs[0]
+
+    if provided == expected {
+        if tick == 0xffff {
+            return win
+        }
+    } else {
+        set_error(`Expected {expected}, but got {provided}`)
+        return fail
+    }
+}

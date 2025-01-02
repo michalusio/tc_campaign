@@ -1,0 +1,13 @@
+kind = combinational
+title = "Adding Vectors"
+size = [-64, -64, 63, 63]
+background = 5
+input_labels = [["A"],["B"]]
+output_labels = ["A PLUS B"]
+save_solution_as_custom = "Hoodoo/Vector/Add"
+dialogue = [
+  (alien_centered, "Now that we have a way of passing vectors of numbers around, we need to be able to add them together."),
+  (info, "Add two vectors component-wise.
+
+Hint: Adding fixed-point numbers works the same as adding normal binary integers, as the dot's position is only in our head."),
+]

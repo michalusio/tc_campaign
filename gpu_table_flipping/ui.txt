@@ -1,0 +1,43 @@
+[text id="a00" text="0.0000" size=20 x=-400 y=70]
+[text id="a10" text="0.0000" size=20 x=-400 y=90]
+[text id="a20" text="0.0000" size=20 x=-400 y=110]
+[text id="a30" text="0.0000" size=20 x=-400 y=130]
+
+[text id="a01" text="0.0000" size=20 x=-300 y=70]
+[text id="a11" text="0.0000" size=20 x=-300 y=90]
+[text id="a21" text="0.0000" size=20 x=-300 y=110]
+[text id="a31" text="0.0000" size=20 x=-300 y=130]
+
+[text id="a02" text="0.0000" size=20 x=-200 y=70]
+[text id="a12" text="0.0000" size=20 x=-200 y=90]
+[text id="a22" text="0.0000" size=20 x=-200 y=110]
+[text id="a32" text="0.0000" size=20 x=-200 y=130]
+
+[text id="a03" text="0.0000" size=20 x=-100 y=70]
+[text id="a13" text="0.0000" size=20 x=-100 y=90]
+[text id="a23" text="0.0000" size=20 x=-100 y=110]
+[text id="a33" text="0.0000" size=20 x=-100 y=130]
+
+[text id="t" text="T" size=20 x=0 y=150]
+
+[text id="eq" text="=" size=20 x=0 y=100]
+
+[text id="m00" text="0.0000" size=20 x=100 y=70]
+[text id="m10" text="0.0000" size=20 x=100 y=90]
+[text id="m20" text="0.0000" size=20 x=100 y=110]
+[text id="m30" text="0.0000" size=20 x=100 y=130]
+
+[text id="m01" text="0.0000" size=20 x=200 y=70]
+[text id="m11" text="0.0000" size=20 x=200 y=90]
+[text id="m21" text="0.0000" size=20 x=200 y=110]
+[text id="m31" text="0.0000" size=20 x=200 y=130]
+
+[text id="m02" text="0.0000" size=20 x=300 y=70]
+[text id="m12" text="0.0000" size=20 x=300 y=90]
+[text id="m22" text="0.0000" size=20 x=300 y=110]
+[text id="m32" text="0.0000" size=20 x=300 y=130]
+
+[text id="m03" text="0.0000" size=20 x=400 y=70]
+[text id="m13" text="0.0000" size=20 x=400 y=90]
+[text id="m23" text="0.0000" size=20 x=400 y=110]
+[text id="m33" text="0.0000" size=20 x=400 y=130]

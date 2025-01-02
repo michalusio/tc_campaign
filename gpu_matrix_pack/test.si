@@ -1,0 +1,173 @@
+
+def fixed_to_str(a: U16) String {
+    var result = <Int>((a & 0x7ff0) >> 4)
+    result *= 10000
+    result += ((<Int>a) & 0xf) * 625
+
+    if (a >> 15) > 0 {
+        result -= 20480000
+    }
+
+    var fraction = result % 10000
+    if fraction < 0 {
+        fraction = -fraction
+    }
+
+    return `{result / 10000}.{(fraction / 1000) % 10}{(fraction / 100) % 10}{(fraction / 10) % 10}{(fraction) % 10}`
+}
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var x = tick
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+    x ^= x << 31
+    x ^= x >> 33
+    x ^= x << 32
+    x ^= x << 63
+    x ^= x >> 65
+    x ^= x << 64
+    inputs[0] = x & 0xffff
+    inputs[1] = (x >> 16) & 0xffff
+    inputs[2] = (x >> 32) & 0xffff
+    inputs[3] = (x >> 48) & 0xffff
+
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+    x ^= x << 31
+    x ^= x >> 33
+    x ^= x << 32
+    x ^= x << 63
+    x ^= x >> 65
+    x ^= x << 64
+    inputs[4] = x & 0xffff
+    inputs[5] = (x >> 16) & 0xffff
+    inputs[6] = (x >> 32) & 0xffff
+    inputs[7] = (x >> 48) & 0xffff
+
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+    x ^= x << 31
+    x ^= x >> 33
+    x ^= x << 32
+    x ^= x << 63
+    x ^= x >> 65
+    x ^= x << 64
+    inputs[8] = x & 0xffff
+    inputs[9] = (x >> 16) & 0xffff
+    inputs[10] = (x >> 32) & 0xffff
+    inputs[11] = (x >> 48) & 0xffff
+
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+    x ^= x << 31
+    x ^= x >> 33
+    x ^= x << 32
+    x ^= x << 63
+    x ^= x >> 65
+    x ^= x << 64
+    inputs[12] = x & 0xffff
+    inputs[13] = (x >> 16) & 0xffff
+    inputs[14] = (x >> 32) & 0xffff
+    inputs[15] = (x >> 48) & 0xffff
+
+    if tick <= 15 {
+        ui_set_text("m00", fixed_to_str(<U16> inputs[0]))
+        ui_set_text("m10", fixed_to_str(<U16> inputs[1]))
+        ui_set_text("m20", fixed_to_str(<U16> inputs[2]))
+        ui_set_text("m30", fixed_to_str(<U16> inputs[3]))
+
+        ui_set_text("m01", fixed_to_str(<U16> inputs[4]))
+        ui_set_text("m11", fixed_to_str(<U16> inputs[5]))
+        ui_set_text("m21", fixed_to_str(<U16> inputs[6]))
+        ui_set_text("m31", fixed_to_str(<U16> inputs[7]))
+
+        ui_set_text("m02", fixed_to_str(<U16> inputs[8]))
+        ui_set_text("m12", fixed_to_str(<U16> inputs[9]))
+        ui_set_text("m22", fixed_to_str(<U16> inputs[10]))
+        ui_set_text("m32", fixed_to_str(<U16> inputs[11]))
+
+        ui_set_text("m03", fixed_to_str(<U16> inputs[12]))
+        ui_set_text("m13", fixed_to_str(<U16> inputs[13]))
+        ui_set_text("m23", fixed_to_str(<U16> inputs[14]))
+        ui_set_text("m33", fixed_to_str(<U16> inputs[15]))
+    }
+    if tick == 16 {
+        ui_set_text("m00", ``)
+        ui_set_text("m10", ``)
+        ui_set_text("m20", ``)
+        ui_set_text("m30", ``)
+
+        ui_set_text("m01", ``)
+        ui_set_text("m11", ``)
+        ui_set_text("m21", ``)
+        ui_set_text("m31", ``)
+
+        ui_set_text("m02", ``)
+        ui_set_text("m12", ``)
+        ui_set_text("m22", ``)
+        ui_set_text("m32", ``)
+
+        ui_set_text("m03", ``)
+        ui_set_text("m13", ``)
+        ui_set_text("m23", ``)
+        ui_set_text("m33", ``)
+    }
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+    
+    var x0 = <U64> (<U16> (inputs[0]))
+    var y0 = <U64> (<U16> (inputs[1]))
+    var z0 = <U64> (<U16> (inputs[2]))
+    var w0 = <U64> (<U16> (inputs[3]))
+    var col0 = x0 | (y0 << 16) | (z0 << 32) | (w0 << 48)
+
+    var x1 = <U64> (<U16> (inputs[4]))
+    var y1 = <U64> (<U16> (inputs[5]))
+    var z1 = <U64> (<U16> (inputs[6]))
+    var w1 = <U64> (<U16> (inputs[7]))
+    var col1 = x1 | (y1 << 16) | (z1 << 32) | (w1 << 48)
+
+    var x2 = <U64> (<U16> (inputs[8]))
+    var y2 = <U64> (<U16> (inputs[9]))
+    var z2 = <U64> (<U16> (inputs[10]))
+    var w2 = <U64> (<U16> (inputs[11]))
+    var col2 = x2 | (y2 << 16) | (z2 << 32) | (w2 << 48)
+
+    var x3 = <U64> (<U16> (inputs[12]))
+    var y3 = <U64> (<U16> (inputs[13]))
+    var z3 = <U64> (<U16> (inputs[14]))
+    var w3 = <U64> (<U16> (inputs[15]))
+    var col3 = x3 | (y3 << 16) | (z3 << 32) | (w3 << 48)
+
+    var providedcol0 = <U64> outputs[0]
+    var providedcol1 = <U64> outputs[1]
+    var providedcol2 = <U64> outputs[2]
+    var providedcol3 = <U64> outputs[3]
+
+    if providedcol0 == col0 && providedcol1 == col1 && providedcol2 == col2 && providedcol3 == col3 {
+        if tick == 0xffff {
+            return win
+        }
+    } else {
+        set_error(`Expected [{col0}, {col1}, {col2}, {col3}], but got [{providedcol0}, {providedcol1}, {providedcol2}, {providedcol3}]`)
+        return fail
+    }
+}

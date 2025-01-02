@@ -1,0 +1,17 @@
+kind = combinational
+title = "Saturating addition"
+size = [-64, -64, 63, 63]
+background = 5
+input_labels = [["A"],["B"]]
+output_labels = ["SUM"]
+save_solution_as_custom = "Hoodoo/Fixed-Point/Add"
+dialogue = [
+  (alien_centered, "Sometimes when adding numbers you might want to not overflow the result, but instead to 'saturate' it, i.e. clamp it at the maximum/minimum value."),
+  (info, "Add two 16-bit numbers.
+
+If the addition resulted in an overflow, you should return the maximum positive value (32767).
+If the addition resulted in an underflow, you should return the maximum negative value (-32768)."),
+]
+post_mortem_first_win = [
+    (alien_centered, `In this campaign when we say "Add numbers", we will refer to the saturating addition.`),
+]

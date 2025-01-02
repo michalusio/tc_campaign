@@ -1,0 +1,11 @@
+kind = combinational
+title = "Vector Multiplication"
+size = [-64, -64, 63, 63]
+background = 5
+input_labels = [["A"],["B"]]
+output_labels = ["A TIMES B"]
+save_solution_as_custom = "Hoodoo/Vector/Mul"
+dialogue = [
+  (alien_centered, "Now that we have a way of passing vectors of numbers around, we need to be able to multiply them together."),
+  (info, "Multiply two vectors component-wise."),
+]

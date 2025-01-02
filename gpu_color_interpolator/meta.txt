@@ -1,0 +1,16 @@
+kind = combinational
+title = "Color Mixing"
+size = [-64, -64, 63, 63]
+background = 5
+input_labels = [["A1"],["C1"],["A2"],["C2"],["A3"],["C3"]]
+output_labels = ["MIXED COLOR"]
+save_solution_as_custom = "Hoodoo/Rasterizer/Interpolator"
+dialogue = [
+  (alien_centered, "When you mix dyes together, the resulting color depends on how much of each dye you have added."),
+  (alien_centered, "Fortunately a GPU does not have to physically mix dyes to paint pixels, as that would be very messy."),
+  (info, "Your inputs are three (weight, RGB color) pairs, where the weight is a 16-bit fixed-point number, and the color is a 24-bit RGB value, where the first byte is Red, the second is Blue, and the third is Green.
+
+The output should be a 24-bit RGB value which is a mix of the colors you are given.
+
+Hint: The formula is R = w0 * R0 + w1 * R1 + w2 * R2")
+]

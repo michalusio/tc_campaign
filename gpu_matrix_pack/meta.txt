@@ -1,0 +1,17 @@
+kind = combinational
+no_score = true
+title = "Matrix Packaging"
+size = [-64, -64, 63, 63]
+background = 5
+input_labels = [["m00"],["m10"],["m20"],["m30"],["m01"],["m11"],["m21"],["m31"],["m02"],["m12"],["m22"],["m32"],["m03"],["m13"],["m23"],["m33"]]
+output_labels = ["COLUMN 0", "COLUMN 1", "COLUMN 2", "COLUMN 3"]
+dialogue = [
+  (alien_centered, "3D graphics requires doing scary computations.
+To make them less scary we pack them into boxes which we call matrices."),
+  (alien_centered, "The most commonly used matrix size for 3D graphics is 4x4, which is composed by 16 elements.
+Matrices can be stored row-by-row, or column-by-column.
+We will store them column-by-column, but it generally doesn't matter."),
+  (info, "Package 16 numbers into four columns, making a column-major order matrix.
+
+Hint: The second index of the input tells you which column the number belongs to."),
+]

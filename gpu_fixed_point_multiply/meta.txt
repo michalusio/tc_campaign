@@ -1,0 +1,21 @@
+kind = combinational
+title = "Fixed-point multiply"
+size = [-64, -64, 63, 63]
+background = 5
+input_labels = [["A"],["B"]]
+output_labels = ["A TIMES B"]
+save_solution_as_custom = "Hoodoo/Fixed-Point/Mul"
+dialogue = [
+  (alien_centered, "Describing the world with just integers gets annoying really quick.
+That's why we will introduce fixed-point numbers."),
+  (info, "A fixed-point number is a binary number where the decimal (binary) point is in a fixed place in the number, e.g.
+
+[color=#ffe666]0110[/color].[color=#66ccff]1010[/color] (binary) = [color=#ffe666]6[/color].[color=#66ccff]625[/color] (decimal)
+
+The digits to the right of the point are treated like inverses of powers of two.
+"),
+ (info, "Create a circuit that will multiply two 16-bit fixed-point numbers.
+Assume the point is after the fourth binary digit.
+If the result overflows, return the maximum positive value (2047.9375).
+If the result underflows, return the maximum negative value (-2048.0).")
+]

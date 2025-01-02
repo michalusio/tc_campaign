@@ -1,0 +1,117 @@
+
+def fixed_to_str(a: U16) String {
+    var result = <Int>((a & 0x7ff0) >> 4)
+    result *= 10000
+    result += ((<Int>a) & 0xf) * 625
+
+    if (a >> 15) > 0 {
+        result -= 20480000
+    }
+
+    var fraction = result % 10000
+    if fraction < 0 {
+        fraction = -fraction
+    }
+
+    return `{result / 10000}.{(fraction / 1000) % 10}{(fraction / 100) % 10}{(fraction / 10) % 10}{(fraction) % 10}`
+}
+
+def draw_matrix_column(colIndex: Int, col: Int, id: String) {
+    ui_set_text(`{id}0{colIndex}`, fixed_to_str(<U16> col))
+    ui_set_text(`{id}1{colIndex}`, fixed_to_str(<U16> (col >> 16)))
+    ui_set_text(`{id}2{colIndex}`, fixed_to_str(<U16> (col >> 32)))
+    ui_set_text(`{id}3{colIndex}`, fixed_to_str(<U16> (col >> 48)))
+}
+
+def permute(x: Int) Int {
+    var p = x
+    p ^= p << 7
+    p ^= p >> 9
+    p ^= p << 8
+    p ^= p << 15
+    p ^= p >> 17
+    p ^= p << 16
+    p ^= p << 31
+    p ^= p >> 33
+    p ^= p << 32
+    p ^= p << 63
+    p ^= p >> 65
+    p ^= p << 64
+    return p
+}
+
+def transpose(c0: Int, c1: Int, c2: Int, c3: Int): [Int] {
+    let a = (c0 & 0xffff) | ((c1 & 0xffff) << 16) | ((c2 & 0xffff) << 32) | ((c3 & 0xffff) << 48)
+    let b = ((c0 >> 16) & 0xffff) | (((c1 >> 16) & 0xffff) << 16) | (((c2 >> 16) & 0xffff) << 32) | (((c3 >> 16) & 0xffff) << 48)
+    let c = ((c0 >> 32) & 0xffff) | (((c1 >> 32) & 0xffff) << 16) | (((c2 >> 32) & 0xffff) << 32) | (((c3 >> 32) & 0xffff) << 48)
+    let d = ((c0 >> 48) & 0xffff) | (((c1 >> 48) & 0xffff) << 16) | (((c2 >> 48) & 0xffff) << 32) | (((c3 >> 48) & 0xffff) << 48)
+    return [a, b, c, d]
+}
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var x = tick
+    x = permute(x)
+    inputs[0] = x
+
+    x = permute(x)
+    inputs[1] = x
+
+    x = permute(x)
+    inputs[2] = x
+
+    x = permute(x)
+    inputs[3] = x
+
+    if tick <= 15 {
+        let t = transpose(inputs[0], inputs[1], inputs[2], inputs[3])
+        let m0 = t[0]
+        let m1 = t[1]
+        let m2 = t[2]
+        let m3 = t[3]
+
+        draw_matrix_column(0, inputs[0], "a")
+        draw_matrix_column(1, inputs[1], "a")
+        draw_matrix_column(2, inputs[2], "a")
+        draw_matrix_column(3, inputs[3], "a")
+
+        draw_matrix_column(0, m0, "m")
+        draw_matrix_column(1, m1, "m")
+        draw_matrix_column(2, m2, "m")
+        draw_matrix_column(3, m3, "m")
+    }
+    if tick == 16 {
+        draw_matrix_column(0, 0, "a")
+        draw_matrix_column(1, 0, "a")
+        draw_matrix_column(2, 0, "a")
+        draw_matrix_column(3, 0, "a")
+
+        draw_matrix_column(0, 0, "m")
+        draw_matrix_column(1, 0, "m")
+        draw_matrix_column(2, 0, "m")
+        draw_matrix_column(3, 0, "m")
+    }
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+    
+    let t = transpose(inputs[0], inputs[1], inputs[2], inputs[3])
+    let m0 = t[0]
+    let m1 = t[1]
+    let m2 = t[2]
+    let m3 = t[3]
+
+    let providedm0 = outputs[0]
+    let providedm1 = outputs[1]
+    let providedm2 = outputs[2]
+    let providedm3 = outputs[3]
+
+    if providedm0 == m0 && providedm1 == m1 && providedm2 == m2 && providedm3 == m3 {
+        if tick == 0xffff {
+            return win
+        }
+    } else {
+        set_error(`Expected [{m0}, {m1}, {m2}, {m3}], but got [{providedm0}, {providedm1}, {providedm2}, {providedm3}]`)
+        return fail
+    }
+}

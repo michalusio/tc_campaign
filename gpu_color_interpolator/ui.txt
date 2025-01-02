@@ -1,0 +1,19 @@
+[text id="w0" color=3 text="..." size=24 x=-400 y=90]
+[text id="mul0" text="*" size=24 x=-350 y=90]
+[text id="c0" text="..." size=24 x=-275 y=90]
+
+[text id="plus0" text="+" x=-200 size=24 y=90]
+
+[text id="w1" text="..." x=-100 size=24 y=90]
+[text id="mul1" text="*" x=-50 size=24 y=90]
+[text id="c1" text="..." x=25 size=24 y=90]
+
+[text id="plus1" text="+" x=100 size=24 y=90]
+
+[text id="w2" text="..." x=200 size=24 y=90]
+[text id="mul2" text="*" x=250 size=24 y=90]
+[text id="c2" text="..." x=325 size=24 y=90]
+
+[text id="eq" text="=" x=400 size=24 y=90]
+
+[text id="result" text="..." x=475 size=24 y=90]

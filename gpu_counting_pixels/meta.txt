@@ -1,0 +1,16 @@
+kind = sequential
+title = "Counting Pixels"
+size = [-64, -64, 63, 63]
+background = 5
+input_labels = [["MIN X"],["MAX X"],["MIN Y"],["MAX Y"], ["RESET"]]
+output_labels = ["X", "Y", "LINE DONE", "AREA DONE"]
+save_solution_as_custom = "Hoodoo/Rasterizer/PixelCounter"
+dialogue = [
+  (alien_centered, "When a computer wants to draw an image, it has to go through the image data line by line, drawing each pixel."),
+  (alien_centered, "Currently that is done by our interns, but we want to replace them with the machine you create."),
+  (info, "Create a nested counter, which starts at [MIN X, MIN Y] and goes through to [MAX X, MAX Y] (inclusive).
+The counter should go line-by-line, first incrementing X, then incrementing Y.
+The counter should signal when a line is completed, and when the counter finishes the iteration.
+When a reset signal comes in, you should start counting again from [MIN X, MIN Y].
+Remember to wrap around."),
+]

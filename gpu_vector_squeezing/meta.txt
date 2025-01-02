@@ -1,0 +1,12 @@
+kind = combinational
+no_score = true
+title = "Vector Squeezy"
+size = [-32, -32, 31, 31]
+background = 5
+input_labels = [["X"],["Y"],["Z"],["W"]]
+output_labels = ["VECTOR"]
+dialogue = [
+  (alien_centered, "Processing graphics is usually done not in terms of singular numbers, but on sets of numbers called vectors."),
+  (alien_centered, "Storing our fixed-point numbers in 16 bits allows us to have a 4D vector in 64 bits, which is very compact."),
+  (info, "Package four numbers - X, Y, Z, W - into a vector, then return it."),
+]

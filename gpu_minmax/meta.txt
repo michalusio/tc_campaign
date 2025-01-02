@@ -1,0 +1,13 @@
+kind = combinational
+title = "MinMaxxing"
+size = [-64, -64, 63, 63]
+background = 5
+input_labels = [["X1"],["Y1"],["X2"],["Y2"],["X3"],["Y3"]]
+output_labels = ["MIN X", "MAX X", "MIN Y", "MAX Y"]
+save_solution_as_custom = "Hoodoo/Rasterizer/MinMax"
+dialogue = [
+  (alien_centered, "Our younglings learn the basics of image processing by filling in spaces with dyes, focusing on not going outside of the given bounds when doing it."),
+  (alien_centered, "We are expecting you to learn that too."),
+  (info, "You are given three sets of 16-bit XY coordinates as input.
+Your task is to output the bounds of those coordinates, that is - minimum X, maximum X, minimum Y, maximum Y."),
+]

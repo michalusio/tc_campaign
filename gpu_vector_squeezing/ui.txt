@@ -1,0 +1,4 @@
+[text id="x" text="..." size=24 y=70]
+[text id="y" text="..." size=24 y=90]
+[text id="z" text="..." size=24 y=110]
+[text id="w" text="..." size=24 y=130]
