@@ -1,0 +1,293 @@
+def fixed_to_str(a: U16) String {
+    var result = <Int>((a & 0x7ff0) >> 4)
+    result *= 10000
+    result += ((<Int>a) & 0xf) * 625
+
+    if (a >> 15) > 0 {
+        result -= 20480000
+    }
+
+    var fraction = result % 10000
+    if fraction < 0 {
+        fraction = -fraction
+    }
+
+    return `{result / 10000}.{(fraction / 1000) % 10}{(fraction / 100) % 10}{(fraction / 10) % 10}{(fraction) % 10}`
+}
+
+def draw_matrix_column(colIndex: Int, col: Int, id: String) {
+    ui_set_text(`{id}0{colIndex}`, fixed_to_str(<U16> (col & 0xffff)))
+    ui_set_text(`{id}1{colIndex}`, fixed_to_str(<U16> ((col >> 16) & 0xffff)))
+    ui_set_text(`{id}2{colIndex}`, fixed_to_str(<U16> ((col >> 32) & 0xffff)))
+    ui_set_text(`{id}3{colIndex}`, fixed_to_str(<U16> ((col >> 48) & 0xffff)))
+}
+
+def mul_vectors(a: Int, b: Int) Int {
+    
+    var ax = <Int> (<S16> (a))
+    var ay = <Int> (<S16> (a >> 16))
+    var az = <Int> (<S16> (a >> 32))
+    var aw = <Int> (<S16> (a >> 48))
+
+    var bx = <Int> (<S16> (b))
+    var by = <Int> (<S16> (b >> 16))
+    var bz = <Int> (<S16> (b >> 32))
+    var bw = <Int> (<S16> (b >> 48))
+
+    var x = (ax * bx) / 16
+    var y = (ay * by) / 16
+    var z = (az * bz) / 16
+    var w = (aw * bw) / 16
+
+    if x > 32767 {
+        x = 32767
+    }
+    if x < -32768 {
+        x = -32768
+    }
+
+    if y > 32767 {
+        y = 32767
+    }
+    if y < -32768 {
+        y = -32768
+    }
+
+    if z > 32767 {
+        z = 32767
+    }
+    if z < -32768 {
+        z = -32768
+    }
+
+    if w > 32767 {
+        w = 32767
+    }
+    if w < -32768 {
+        w = -32768
+    }
+
+    return <Int>(x | (y << 16) | (z << 32) | (w << 48))
+}
+
+dot sum_vector(ve: Int) Int {
+    let x0 = <Int>(<S16>(ve & 0xffff))
+    let y0 = <Int>(<S16>((ve >> 16) & 0xffff))
+    let z0 = <Int>(<S16>((ve >> 32) & 0xffff))
+    let w0 = <Int>(<S16>((ve >> 48) & 0xffff))
+    var p0 = x0 + y0
+    if p0 > 32767 {
+        p0 = 32767
+    }
+    if p0 < -32768 {
+        p0 = -32768
+    }
+    var t0 = z0 + w0
+    if t0 > 32767 {
+        t0 = 32767
+    }
+    if t0 < -32768 {
+        t0 = -32768
+    }
+    var v = p0 + t0
+    if v > 32767 {
+        v = 32767
+    }
+    if v < -32768 {
+        v = -32768
+    }
+    return v
+}
+
+dot scalar_sum(vectors: [Int]) Int {
+    var x = vectors[0].sum_vector()
+    var y = vectors[1].sum_vector()
+    var z = vectors[2].sum_vector()
+    var w = vectors[3].sum_vector()
+    return x | (y << 16) | (z << 32) | (w << 48)
+}
+
+dot transpose(m: [Int]) [Int] {
+    let m00 = m[0] & 0xffff
+    let m10 = (m[0] >> 16) & 0xffff
+    let m20 = (m[0] >> 32) & 0xffff
+    let m30 = (m[0] >> 48) & 0xffff
+
+    let m01 = m[1] & 0xffff
+    let m11 = (m[1] >> 16) & 0xffff
+    let m21 = (m[1] >> 32) & 0xffff
+    let m31 = (m[1] >> 48) & 0xffff
+
+    let m02 = m[2] & 0xffff
+    let m12 = (m[2] >> 16) & 0xffff
+    let m22 = (m[2] >> 32) & 0xffff
+    let m32 = (m[2] >> 48) & 0xffff
+
+    let m03 = m[3] & 0xffff
+    let m13 = (m[3] >> 16) & 0xffff
+    let m23 = (m[3] >> 32) & 0xffff
+    let m33 = (m[3] >> 48) & 0xffff
+
+    let a = m00 | (m01 << 16) | (m02 << 32) | (m03 << 48)
+    let b = m10 | (m11 << 16) | (m12 << 32) | (m13 << 48)
+    let c = m20 | (m21 << 16) | (m22 << 32) | (m23 << 48)
+    let d = m30 | (m31 << 16) | (m32 << 32) | (m33 << 48)
+    return [a,b,c,d]
+}
+
+binary *(ma: [Int], b: [Int]) [Int] {
+    let a = ma.transpose()
+    var temp0 = [
+        a[0] * b[0],
+        a[1] * b[0],
+        a[2] * b[0],
+        a[3] * b[0]
+    ]
+    var temp1 = [
+        a[0] * b[1],
+        a[1] * b[1],
+        a[2] * b[1],
+        a[3] * b[1]
+    ]
+    var temp2 = [
+        a[0] * b[2],
+        a[1] * b[2],
+        a[2] * b[2],
+        a[3] * b[2]
+    ]
+    var temp3 = [
+        a[0] * b[3],
+        a[1] * b[3],
+        a[2] * b[3],
+        a[3] * b[3]
+    ]
+    return [
+        temp0.scalar_sum(),
+        temp1.scalar_sum(),
+        temp2.scalar_sum(),
+        temp3.scalar_sum()
+    ]
+}
+
+def permute(x: Int) Int {
+    var p = x
+    p ^= p << 7
+    p ^= p >> 9
+    p ^= p << 8
+    p ^= p << 15
+    p ^= p >> 17
+    p ^= p << 16
+    p ^= p << 31
+    p ^= p >> 33
+    p ^= p << 32
+    p ^= p << 63
+    p ^= p >> 65
+    p ^= p << 64
+    return p
+}
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var x = tick
+    x = permute(x)
+    inputs[0] = x
+
+    x = permute(x)
+    inputs[1] = x
+
+    x = permute(x)
+    inputs[2] = x
+
+    x = permute(x)
+    inputs[3] = x
+
+    x = permute(x)
+    inputs[4] = x
+
+    x = permute(x)
+    inputs[5] = x
+
+    x = permute(x)
+    inputs[6] = x
+
+    x = permute(x)
+    inputs[7] = x
+
+    if tick <= 15 {
+        let a = [
+            inputs[0],
+            inputs[1],
+            inputs[2],
+            inputs[3]
+        ]
+        let b = [
+            inputs[4],
+            inputs[5],
+            inputs[6],
+            inputs[7]
+        ]
+        let m = a * b
+
+        draw_matrix_column(0, a[0], "a")
+        draw_matrix_column(1, a[1], "a")
+        draw_matrix_column(2, a[2], "a")
+        draw_matrix_column(3, a[3], "a")
+
+        draw_matrix_column(0, b[0], "b")
+        draw_matrix_column(1, b[1], "b")
+        draw_matrix_column(2, b[2], "b")
+        draw_matrix_column(3, b[3], "b")
+
+        draw_matrix_column(0, m[0], "m")
+        draw_matrix_column(1, m[1], "m")
+        draw_matrix_column(2, m[2], "m")
+        draw_matrix_column(3, m[3], "m")
+    }
+    if tick == 16 {
+        draw_matrix_column(0, <Int>0, "a")
+        draw_matrix_column(1, <Int>0, "a")
+        draw_matrix_column(2, <Int>0, "a")
+        draw_matrix_column(3, <Int>0, "a")
+
+        draw_matrix_column(0, <Int>0, "b")
+        draw_matrix_column(1, <Int>0, "b")
+        draw_matrix_column(2, <Int>0, "b")
+        draw_matrix_column(3, <Int>0, "b")
+
+        draw_matrix_column(0, <Int>0, "m")
+        draw_matrix_column(1, <Int>0, "m")
+        draw_matrix_column(2, <Int>0, "m")
+        draw_matrix_column(3, <Int>0, "m")
+    }
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+    
+    let a = [
+        inputs[0],
+        inputs[1],
+        inputs[2],
+        inputs[3]
+    ]
+    let b = [
+        inputs[4],
+        inputs[5],
+        inputs[6],
+        inputs[7]
+    ]
+    let m = a * b
+
+    let providedm0 = outputs[0]
+    let providedm1 = outputs[1]
+    let providedm2 = outputs[2]
+    let providedm3 = outputs[3]
+
+    if providedm0 == m[0] && providedm1 == m[1] && providedm2 == m[2] && providedm3 == m[3] {
+        if tick == 0xffff {
+            return win
+        }
+    } else {
+        set_error(`Expected [{m[0]}, {m[1]}, {m[2]}, {m[3]}], but got [{providedm0}, {providedm1}, {providedm2}, {providedm3}]`)
+        return fail
+    }
+}

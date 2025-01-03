@@ -1,0 +1,89 @@
+
+def get_expected(a: U16, b: U16) U16 {
+    let avalue = <Int> (<S16>a)
+    let bvalue = <Int> (<S16>b)
+    var adividedbyb = (avalue * 16) / bvalue
+
+    if adividedbyb > 32767 {
+        adividedbyb = 32767
+    }
+    if adividedbyb < -32768 {
+        adividedbyb = -32768
+    }
+    return <U16> adividedbyb
+}
+
+def fixed_to_str(a: U16) String {
+    var result = <Int>((a & 0x7ff0) >> 4)
+    result *= 10000
+    result += ((<Int>a) & 0xf) * 625
+
+    if (a >> 15) > 0 {
+        result -= 20480000
+    }
+
+    var fraction = result % 10000
+    if fraction < 0 {
+        fraction = -fraction
+    }
+
+    return `{result / 10000}.{(fraction / 1000) % 10}{(fraction / 100) % 10}{(fraction / 10) % 10}{(fraction) % 10}`
+}
+
+def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
+
+    var x = tick
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+    x ^= x << 7
+    x ^= x >> 9
+    x ^= x << 8
+    x ^= x << 15
+    x ^= x >> 17
+    x ^= x << 16
+
+    var a = <U16> (x & 0x3ff)
+    var b = <U16> ((x >> 16) & 0x3ff)
+
+    if x & 0x8000 > 0 {
+        a = -a
+    }
+    if x & 0x80000000 > 0 {
+        b = -b
+    }
+    if b == 0 {
+        b = 1
+    }
+
+    inputs[0] = a
+    inputs[1] = b
+
+    if tick <= 15 {
+        ui_set_text("formula", `{fixed_to_str(a)} / {fixed_to_str(b)} = {fixed_to_str(get_expected(a, b))}`)
+    }
+    if tick == 16 {
+        ui_set_text("formula", ``)
+    }
+}
+
+def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
+    
+    let a = <U16> inputs[0]
+    let b = <U16> inputs[1]
+
+    let expected = get_expected(a, b)
+    let provided = <U16> outputs[0]
+
+    if provided == expected {
+        if tick == 0xffff {
+            return win
+        }
+    } else {
+        set_error(`Expected {expected}, but got {provided}`)
+        return fail
+    }
+}

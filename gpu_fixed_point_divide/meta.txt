@@ -1,0 +1,15 @@
+kind = combinational
+title = "Fixed-point division"
+size = [-64, -64, 63, 63]
+background = 5
+input_labels = [["A"],["B"]]
+output_labels = ["A DIVIDED BY B"]
+save_solution_as_custom = "Hoodoo/Fixed-Point/Div"
+dialogue = [
+  (alien_centered, "Apart from adding and multiplying fixed-point numbers, we also might want to divide them."),
+ (info, "Create a circuit that will divide one 16-bit fixed-point number by another.
+Assume the point is after the fourth binary digit.
+If the result overflows, return the maximum positive value (2047.9375).
+If the result underflows, return the maximum negative value (-2048.0).
+The denominator will never be 0.")
+]

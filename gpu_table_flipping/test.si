@@ -40,7 +40,7 @@ def permute(x: Int) Int {
     return p
 }
 
-def transpose(m: [Int]): [Int] {
+def transpose(m: [Int]) [Int] {
     let m00 = m[0] & 0xffff
     let m10 = (m[0] >> 16) & 0xffff
     let m20 = (m[0] >> 32) & 0xffff
@@ -65,12 +65,12 @@ def transpose(m: [Int]): [Int] {
     let b = m10 | (m11 << 16) | (m12 << 32) | (m13 << 48)
     let c = m20 | (m21 << 16) | (m22 << 32) | (m23 << 48)
     let d = m30 | (m31 << 16) | (m32 << 32) | (m33 << 48)
-    return [a, b, c, d]
+    return [a,b,c,d]
 }
 
 def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
 
-    var x = tick
+    var x = tick * 777
     x = permute(x)
     inputs[0] = x
 
@@ -85,20 +85,16 @@ def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
 
     if tick <= 15 {
         let t = transpose(inputs)
-        let m0 = t[0]
-        let m1 = t[1]
-        let m2 = t[2]
-        let m3 = t[3]
 
         draw_matrix_column(0, inputs[0], "a")
         draw_matrix_column(1, inputs[1], "a")
         draw_matrix_column(2, inputs[2], "a")
         draw_matrix_column(3, inputs[3], "a")
 
-        draw_matrix_column(0, m0, "m")
-        draw_matrix_column(1, m1, "m")
-        draw_matrix_column(2, m2, "m")
-        draw_matrix_column(3, m3, "m")
+        draw_matrix_column(0, t[0], "m")
+        draw_matrix_column(1, t[1], "m")
+        draw_matrix_column(2, t[2], "m")
+        draw_matrix_column(3, t[3], "m")
     }
     if tick == 16 {
         draw_matrix_column(0, 0, "a")
@@ -116,22 +112,18 @@ def get_input($scratch_space: [Int], tick: Int, $inputs: [Int]) {
 def check_output($scratch_space: [Int], tick: Int, inputs: [Int], outputs: [Int]) TestResult {
     
     let t = transpose(inputs)
-    let m0 = t[0]
-    let m1 = t[1]
-    let m2 = t[2]
-    let m3 = t[3]
 
     let providedm0 = outputs[0]
     let providedm1 = outputs[1]
     let providedm2 = outputs[2]
     let providedm3 = outputs[3]
 
-    if providedm0 == m0 && providedm1 == m1 && providedm2 == m2 && providedm3 == m3 {
+    if providedm0 == t[0] && providedm1 == t[1] && providedm2 == t[2] && providedm3 == t[3] {
         if tick == 0xffff {
             return win
         }
     } else {
-        set_error(`Expected [{m0}, {m1}, {m2}, {m3}], but got [{providedm0}, {providedm1}, {providedm2}, {providedm3}]`)
+        set_error(`Expected [{t[0]}, {t[1]}, {t[2]}, {t[3]}], but got [{providedm0}, {providedm1}, {providedm2}, {providedm3}]`)
         return fail
     }
 }
